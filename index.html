@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bodega do Galego - Os melhores acessórios de tecnologia com preço justo. Compre pelo WhatsApp!">
+    <title>Bodega do Galego - Vitrine Virtual</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/vitrine.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="vitrine-header">
+        <div class="logo">🏪 Bodega do <span>Galego</span></div>
+        <input
+            type="text"
+            id="search"
+            class="search-bar"
+            placeholder="Buscar produtos..."
+        >
+        <div class="header-actions">
+            <a href="login.html" class="admin-btn">🔐 Painel Admin</a>
+        </div>
+    </header>
+
+    <!-- Banner -->
+    <section class="banner">
+        <h1>Mega Ofertas de Tecnologia!</h1>
+        <p>Até 50% de desconto em produtos selecionados</p>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories">
+        <h2>Categorias</h2>
+        <div class="category-list" id="category-container">
+            <div class="category-item active" data-categoria="Todos">Todos</div>
+            <div class="category-item" data-categoria="Acessórios">Acessórios</div>
+            <div class="category-item" data-categoria="Cabos">Cabos</div>
+            <div class="category-item" data-categoria="Fones">Fones</div>
+            <div class="category-item" data-categoria="TV e Áudio">TV e Áudio</div>
+        </div>
+    </section>
+
+    <!-- Product Grid -->
+    <main class="vitrine" id="vitrine-container">
+    </main>
+
+    <!-- Footer -->
+    <footer class="vitrine-footer">
+        <p>© 2025 Bodega do Galego — Todos os direitos reservados</p>
+    </footer>
+
+    <!-- Scripts: dados.js MUST load before vitrine.js -->
+    <script src="js/dados.js"></script>
+    <script src="js/vitrine.js"></script>
+</body>
+</html>

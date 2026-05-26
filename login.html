@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Acesso administrativo - Bodega do Galego">
+    <title>Login - Bodega do Galego</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body class="login-page">
+
+    <!-- Decorative Background Orbs -->
+    <div class="login-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Login Card -->
+    <div class="login-card">
+        <div class="login-logo">
+            <span class="icon">🏪</span>
+            <h1>Bodega do <span>Galego</span></h1>
+            <p>Painel Administrativo</p>
+        </div>
+
+        <form id="login-form" class="login-form">
+            <div id="login-erro" class="login-erro"></div>
+
+            <div class="input-group">
+                <label for="username">Usuário</label>
+                <span class="input-icon">👤</span>
+                <input
+                    type="text"
+                    id="username"
+                    class="login-input"
+                    placeholder="Digite seu usuário"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="password">Senha</label>
+                <span class="input-icon">🔒</span>
+                <input
+                    type="password"
+                    id="password"
+                    class="login-input"
+                    placeholder="Digite sua senha"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn-login">
+                Entrar no Painel
+            </button>
+        </form>
+
+        <div class="login-footer">
+            <a href="index.html">← Voltar para a vitrine</a>
+        </div>
+    </div>
+
+    <script src="js/login.js"></script>
+</body>
+</html>

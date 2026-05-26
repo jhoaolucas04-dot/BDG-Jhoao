@@ -1,0 +1,56 @@
+[
+    {
+        "id": 1,
+        "nome": "Capa para Celular",
+        "preco": 25.90,
+        "estoque": 50,
+        "categoria": "Acessórios",
+        "status": "Disponível",
+        "imagem": "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400"
+    },
+    {
+        "id": 2,
+        "nome": "Película de Vidro",
+        "preco": 15.90,
+        "estoque": 45,
+        "categoria": "Acessórios",
+        "status": "Disponível",
+        "imagem": "https://images.unsplash.com/photo-1605787020600-b9ebd5df1d07?w=400"
+    },
+    {
+        "id": 3,
+        "nome": "Cabo USB Tipo C",
+        "preco": 19.90,
+        "estoque": 30,
+        "categoria": "Cabos",
+        "status": "Disponível",
+        "imagem": "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400"
+    },
+    {
+        "id": 4,
+        "nome": "Cabo Lightning iPhone",
+        "preco": 24.90,
+        "estoque": 25,
+        "categoria": "Cabos",
+        "status": "Disponível",
+        "imagem": "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=400"
+    },
+    {
+        "id": 5,
+        "nome": "Fone de Ouvido Bluetooth",
+        "preco": 89.90,
+        "estoque": 12,
+        "categoria": "Fones",
+        "status": "Disponível",
+        "imagem": "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=400"
+    },
+    {
+        "id": 6,
+        "nome": "Caixa de Som Portátil",
+        "preco": 120.00,
+        "estoque": 0,
+        "categoria": "TV e Áudio",
+        "status": "Esgotado",
+        "imagem": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400"
+    }
+]
