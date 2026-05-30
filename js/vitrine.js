@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         if (destaques.length === 0) {
             // Fallback: banner estático
-            track.innerHTML = '<div class="carousel-fallback"><h2>Bodega do Galego</h2><p>Os melhores acessórios de tecnologia com preço justo!</p></div>';
+            track.innerHTML = '<div class="carousel-fallback"><img src="img/banner bodega do galego.png" alt="Bodega do Galego" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'"></div>';
             document.getElementById('carousel-prev').style.display = 'none';
             document.getElementById('carousel-next').style.display = 'none';
             dotsContainer.style.display = 'none';
