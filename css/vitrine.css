@@ -80,8 +80,6 @@
     border-radius: var(--radius-lg);
     overflow: hidden;
     position: relative;
-    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
-    box-shadow: var(--shadow-lg);
     min-height: 280px;
 }
 
@@ -236,7 +234,7 @@
 /* Carousel empty fallback */
 .carousel-fallback {
     text-align: center;
-    padding: 60px 40px;
+    padding: 20px 40px;
     color: #FAF0DC;
 }
 
