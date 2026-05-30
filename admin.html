@@ -7,13 +7,23 @@
     <title>Dashboard Admin - Bodega do Galego</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/admin.css">
+    <!-- Prevenir flash de tema errado -->
+    <script>
+        (function(){var t=localStorage.getItem('bodega_tema');if(t){document.documentElement.setAttribute('data-theme',t)}else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches){document.documentElement.setAttribute('data-theme','dark')}})();
+    </script>
 </head>
 <body class="admin-page">
 
     <!-- Header -->
     <header class="admin-header">
-        <h2><span class="header-dot"></span> Dashboard Admin</h2>
+        <h2>
+            <img src="img/logo.jpeg" alt="Logo" class="admin-logo-img">
+            Dashboard Admin
+        </h2>
         <nav class="admin-nav">
+            <button class="btn-tema" title="Alternar modo escuro" aria-label="Alternar modo escuro">
+                <span class="tema-icon">🌙</span>
+            </button>
             <a href="index.html">🏪 Ver Vitrine</a>
             <a href="#" id="btn-logout" class="btn-logout">🚪 Sair</a>
         </nav>
@@ -89,7 +99,7 @@
                     <span class="placeholder-text">📷 Preview da imagem aparecerá aqui</span>
                 </div>
 
-                <button type="submit" class="btn-salvar">💾 Salvar Produto</button>
+                <button type="submit" class="btn-salvar" id="btn-submit">➕ Adicionar Produto</button>
                 <button type="button" id="btn-cancelar" class="btn-cancelar">✖ Cancelar Edição</button>
             </form>
         </div>
@@ -116,8 +126,9 @@
         </div>
     </div>
 
-    <!-- Scripts: dados.js MUST load before admin.js -->
+    <!-- Scripts -->
     <script src="js/dados.js"></script>
+    <script src="js/tema.js"></script>
     <script src="js/admin.js"></script>
 </body>
 </html>

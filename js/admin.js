@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         btnCancelar.style.display = 'block';
         document.querySelector('.box-title-form').textContent = '✏️ Editando Produto';
+        document.getElementById('btn-submit').textContent = '💾 Salvar Alterações';
         inputNome.focus();
 
         // Scroll pro formulário em mobile
@@ -155,6 +156,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         inputId.value = '';
         btnCancelar.style.display = 'none';
         document.querySelector('.box-title-form').textContent = '➕ Novo Produto';
+        document.getElementById('btn-submit').textContent = '➕ Adicionar Produto';
         imgPreview.style.display = 'none';
         previewWrapper.querySelector('.placeholder-text').textContent = '📷 Preview da imagem aparecerá aqui';
         previewWrapper.querySelector('.placeholder-text').style.display = 'block';

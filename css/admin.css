@@ -16,6 +16,7 @@ body.admin-page {
     box-shadow: var(--shadow-sm);
     margin-bottom: 24px;
     animation: fadeIn 0.4s ease-out;
+    transition: background-color 0.3s ease;
 }
 
 .admin-header h2 {
@@ -27,13 +28,11 @@ body.admin-page {
     gap: 10px;
 }
 
-.admin-header h2 .header-dot {
-    width: 10px;
-    height: 10px;
-    background: var(--primary);
-    border-radius: 50%;
-    display: inline-block;
-    animation: pulse 2s infinite;
+.admin-header h2 .admin-logo-img {
+    height: 36px;
+    width: auto;
+    border-radius: var(--radius-sm);
+    object-fit: contain;
 }
 
 .admin-nav {
@@ -84,6 +83,7 @@ body.admin-page {
     position: relative;
     overflow: hidden;
     animation: slideUp 0.5s ease-out both;
+    transition: background-color 0.3s ease;
 }
 
 .stat-card:nth-child(1) { animation-delay: 0.05s; }
@@ -139,6 +139,7 @@ body.admin-page {
     padding: 28px;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
+    transition: background-color 0.3s ease;
 }
 
 .box-title {
@@ -147,7 +148,7 @@ body.admin-page {
     color: var(--text-dark);
     margin-bottom: 22px;
     padding-bottom: 12px;
-    border-bottom: 2px solid var(--bg);
+    border-bottom: 2px solid var(--surface);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -183,7 +184,7 @@ body.admin-page {
 
 .image-preview-wrapper.has-image {
     border-color: var(--primary);
-    background: rgba(243, 176, 4, 0.03);
+    background: rgba(212, 160, 23, 0.05);
     padding: 8px;
 }
 
@@ -255,14 +256,14 @@ body.admin-page {
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    background: var(--bg);
+    background: var(--surface);
     border-bottom: 2px solid var(--border);
 }
 
 .admin-table td {
     padding: 14px 16px;
     font-size: 14px;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--border);
     vertical-align: middle;
 }
 
@@ -271,7 +272,7 @@ body.admin-page {
 }
 
 .admin-table tbody tr:hover {
-    background: #fafbfc;
+    background: var(--surface);
 }
 
 .admin-table .prod-name {
@@ -290,7 +291,7 @@ body.admin-page {
     height: 44px;
     border-radius: var(--radius-sm);
     object-fit: cover;
-    background: var(--bg);
+    background: var(--surface);
 }
 
 /* ===== Action Buttons ===== */
@@ -314,8 +315,8 @@ body.admin-page {
 }
 
 .btn-edit {
-    background: rgba(243, 176, 4, 0.1);
-    color: var(--primary-dark);
+    background: rgba(212, 160, 23, 0.1);
+    color: var(--primary);
 }
 
 .btn-edit:hover {
@@ -364,8 +365,8 @@ body.admin-page {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    background: var(--text-dark);
-    color: #fff;
+    background: var(--secondary);
+    color: #FAF0DC;
     padding: 14px 24px;
     border-radius: var(--radius-sm);
     font-size: 14px;
@@ -394,11 +395,26 @@ body.admin-page {
         padding: 16px;
     }
 
+    .admin-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
     .stat-card .stat-value {
         font-size: 22px;
     }
 
     .box {
         padding: 20px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 10px 8px;
+        font-size: 12px;
+    }
+
+    .actions-cell {
+        flex-direction: column;
     }
 }

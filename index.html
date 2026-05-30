@@ -7,12 +7,19 @@
     <title>Bodega do Galego - Vitrine Virtual</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/vitrine.css">
+    <!-- Prevenir flash de tema errado -->
+    <script>
+        (function(){var t=localStorage.getItem('bodega_tema');if(t){document.documentElement.setAttribute('data-theme',t)}else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches){document.documentElement.setAttribute('data-theme','dark')}})();
+    </script>
 </head>
 <body>
 
     <!-- Header -->
     <header class="vitrine-header">
-        <div class="logo">🏪 Bodega do <span>Galego</span></div>
+        <div class="logo">
+            <img src="img/logo.jpeg" alt="Bodega do Galego" class="logo-img">
+            Bodega do <span>Galego</span>
+        </div>
         <input
             type="text"
             id="search"
@@ -20,14 +27,21 @@
             placeholder="Buscar produtos..."
         >
         <div class="header-actions">
+            <button class="btn-tema" title="Alternar modo escuro" aria-label="Alternar modo escuro">
+                <span class="tema-icon">🌙</span>
+            </button>
             <a href="login.html" class="admin-btn">🔐 Painel Admin</a>
         </div>
     </header>
 
-    <!-- Banner -->
-    <section class="banner">
-        <h1>Mega Ofertas de Tecnologia!</h1>
-        <p>Até 50% de desconto em produtos selecionados</p>
+    <!-- Carrossel de Produtos (substituiu o banner) -->
+    <section class="carousel" id="carousel">
+        <div class="carousel-track" id="carousel-track">
+            <!-- Populado pelo JS -->
+        </div>
+        <button class="carousel-btn carousel-prev" id="carousel-prev" aria-label="Slide anterior">❮</button>
+        <button class="carousel-btn carousel-next" id="carousel-next" aria-label="Próximo slide">❯</button>
+        <div class="carousel-dots" id="carousel-dots"></div>
     </section>
 
     <!-- Categories -->
@@ -51,8 +65,9 @@
         <p>© 2025 Bodega do Galego — Todos os direitos reservados</p>
     </footer>
 
-    <!-- Scripts: dados.js MUST load before vitrine.js -->
+    <!-- Scripts -->
     <script src="js/dados.js"></script>
+    <script src="js/tema.js"></script>
     <script src="js/vitrine.js"></script>
 </body>
 </html>
