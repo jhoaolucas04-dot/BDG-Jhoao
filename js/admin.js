@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             };
         } else {
             imgPreview.style.display = 'none';
-            previewWrapper.querySelector('.placeholder-text').textContent = '📷 Preview da imagem aparecerá aqui';
+            previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
             previewWrapper.querySelector('.placeholder-text').style.display = 'block';
             previewWrapper.classList.remove('has-image');
         }
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         tbody.innerHTML = '';
 
         if (produtos.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📦</div><p>Nenhum produto cadastrado ainda</p></div></td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-dolly" style="color: rgb(77, 50, 21);"></i></div><p>Nenhum produto cadastrado ainda</p></div></td></tr>';
             atualizarIndicadores();
             return;
         }
@@ -92,9 +92,9 @@ document.addEventListener('DOMContentLoaded', async function () {
                 '<td>' + p.estoque + ' un</td>' +
                 '<td><span class="badge ' + (p.status === 'Disponível' ? 'badge-success' : 'badge-danger') + '">' + (p.status === 'Disponível' ? '● Disponível' : '● Esgotado') + '</span></td>' +
                 '<td><div class="actions-cell">' +
-                    '<button class="btn-action btn-edit" data-id="' + p.id + '" title="Editar">✏️ Editar</button>' +
-                    '<button class="btn-action btn-toggle" data-id="' + p.id + '" title="Alternar status">🔄 Status</button>' +
-                    '<button class="btn-action btn-delete" data-id="' + p.id + '" title="Excluir">🗑️</button>' +
+                    '<button class="btn-action btn-edit" data-id="' + p.id + '" title="Editar"><i class="fa-solid fa-pencil" style="color: rgb(230, 181, 5);"></i> Editar</button>' +
+                    '<button class="btn-action btn-toggle" data-id="' + p.id + '" title="Alternar status"><i class="fa-solid fa-rotate" style="color: rgb(119, 206, 69);"></i> Status</button>' +
+                    '<button class="btn-action btn-delete" data-id="' + p.id + '" title="Excluir"><i class="fa-solid fa-trash-can" style="color: rgb(192, 44, 44);"></i></button>' +
                 '</div></td>';
 
             tbody.appendChild(tr);
@@ -143,8 +143,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         inputImagem.dispatchEvent(new Event('input')); // trigger preview
 
         btnCancelar.style.display = 'block';
-        document.querySelector('.box-title-form').textContent = '✏️ Editando Produto';
-        document.getElementById('btn-submit').textContent = '💾 Salvar Alterações';
+        document.querySelector('.box-title-form').innerHTML = '<i class="fa-solid fa-pencil" style="color: rgb(82, 55, 29);"></i> Editando Produto';
+        document.getElementById('btn-submit').innerHTML = '<i class="fa-regular fa-floppy-disk" style="color: rgb(255, 255, 255);"></i> Salvar Alterações';
         inputNome.focus();
 
         // Scroll pro formulário em mobile
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         document.querySelector('.box-title-form').textContent = '➕ Novo Produto';
         document.getElementById('btn-submit').textContent = '➕ Adicionar Produto';
         imgPreview.style.display = 'none';
-        previewWrapper.querySelector('.placeholder-text').textContent = '📷 Preview da imagem aparecerá aqui';
+        previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
         previewWrapper.querySelector('.placeholder-text').style.display = 'block';
         previewWrapper.classList.remove('has-image');
     }
