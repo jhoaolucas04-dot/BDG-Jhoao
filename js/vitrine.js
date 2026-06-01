@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     '<img src="' + p.imagem + '" alt="' + p.nome + '" class="carousel-img" onerror="this.style.display=\'none\'">' +
                 '</div>' +
                 '<div class="carousel-info">' +
-                    '<span class="carousel-badge">⭐ Destaque</span>' +
+                    '<span class="carousel-badge"><i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i> Destaque</span>' +
                     '<h2 class="carousel-name">' + p.nome + '</h2>' +
                     '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>' +
                     '<a href="' + linkWhats + '" target="_blank" class="carousel-whatsapp">💬 Comprar via WhatsApp</a>' +
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
 
         if (filtrados.length === 0) {
-            container.innerHTML = '<div class="vitrine-empty"><div class="empty-icon">🔍</div><p>Nenhum produto encontrado</p></div>';
+            container.innerHTML = '<div class="vitrine-empty"><div class="empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div><p>Nenhum produto encontrado</p></div>';
             return;
         }
 
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     '<h3 class="product-name">' + p.nome + '</h3>' +
                     '<div class="product-price">R$ ' + p.preco.toFixed(2) + '</div>' +
                     '<a href="' + (isEsgotado ? '#' : linkWhats) + '" ' + (isEsgotado ? '' : 'target="_blank"') + ' class="btn-whatsapp ' + (isEsgotado ? 'esgotado' : '') + '">' +
-                        (isEsgotado ? '⚠️ Esgotado' : '💬 Comprar via WhatsApp') +
+                        (isEsgotado ? '<i class="fa-solid fa-triangle-exclamation" style="color: rgb(255, 212, 59);"></i> Esgotado' : '💬 Comprar via WhatsApp') +
                     '</a>' +
                 '</div>';
 

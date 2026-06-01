@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         tbody.innerHTML = '';
 
         if (produtos.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-dolly" style="color: rgb(77, 50, 21);"></i></div><p>Nenhum produto cadastrado ainda</p></div></td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-dolly" style="color: rgb(73, 67, 61);"></i></div><p>Nenhum produto cadastrado ainda</p></div></td></tr>';
             atualizarIndicadores();
             return;
         }
