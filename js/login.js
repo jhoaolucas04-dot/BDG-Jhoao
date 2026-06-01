@@ -7,73 +7,31 @@ document.addEventListener('DOMContentLoaded', function () {
     const erroMsg = document.getElementById('login-erro');
     const card = document.querySelector('.login-card');
 
-    function carregarusuarios(){
-        return JSON.parse(localStorage.getItem ('usuarios')) || [];
+    // Se já estiver logado, vai direto pro admin
+    if (sessionStorage.getItem('logado') === 'true') {
+        window.location.href = 'admin.html';
+        return;
     }
 
-    // Carregar usuários que estão em local storage
-    function salvarusuarios(usuarios){
-     localStorage.setItem('usuarios', JSON.stringify(usuarios));
-    }
-
-    let usuarios = carregarusuarios();
-
-    if (!usuarios.find(u => u.usuario === 'admin')) {
-        usuarios.push({
-        id: 1,
-        usuario: 'admin',
-        senha: 'admin123',
-        role: 'admin'
-        });
-    salvarusuarios(usuarios);    
-    }
-
-    form.addEventListener('submit', async function (e) {
+    form.addEventListener('submit', function (e) {
         e.preventDefault();
-    
-    
+
         const usuario = document.getElementById('username').value.trim();
         const senha = document.getElementById('password').value;
-        
-        let usuarios = carregarusuarios();
-        let user = usuarios.find(u => u.usuario === usuario);
-        
-        if (!user){
-            user = {
-                usuario,
-                senha,
-                role: 'user'
-            };
-            usuarios.push(user);
-            salvarusuarios(usuarios);
-        }
-       
-        // menssagem de erro 
-        else if (user.senha !== senha){
-              // Mostrar erro com animação
-              erroMsg.textContent = '⚠️ Usuário ou senha incorretos!';
-              erroMsg.style.display = 'block';
 
-              card.classList.add('shake');
-              setTimeout(function () {
+        // Credenciais fixas
+        if (usuario === 'admin' && senha === 'admin123') {
+            sessionStorage.setItem('logado', 'true');
+            window.location.href = 'admin.html';
+        } else {
+            // Mostrar erro com animação
+            erroMsg.textContent = '⚠️ Usuário ou senha incorretos!';
+            erroMsg.style.display = 'block';
+
+            card.classList.add('shake');
+            setTimeout(function () {
                 card.classList.remove('shake');
             }, 500);
-            return;
-             
-
         }
- 
-        if (user){
-               sessionStorage.setItem('logado', 'true');
-               sessionStorage.setItem('usuario', user.usuario);
-               sessionStorage.setItem('role', user.role || 'user');
-              
-                if (user.role === 'admin'){
-                  window.location.href = 'admin.html';
-                  } else {
-                  window.location.href = 'index.html';
-                }
-        }
-
     });
 });
