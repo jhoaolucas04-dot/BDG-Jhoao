@@ -7,11 +7,12 @@
     <title>Login - Bodega do Galego</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <!-- Prevenir flash de tema errado -->
     <script>
         (function(){var t=localStorage.getItem('bodega_tema');if(t){document.documentElement.setAttribute('data-theme',t)}else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches){document.documentElement.setAttribute('data-theme','dark')}})();
-    </script>
-
+    </script> 
+    
      <link rel="icon" type="imagecon" href="img/logo.jpeg">        
 </head>
 <body class="login-page">
@@ -26,8 +27,6 @@
     <!-- Decorative Background Orbs -->
     <div class="login-bg">
         <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
     </div>
 
     <!-- Login Card -->
@@ -43,7 +42,7 @@
 
             <div class="input-group">
                 <label for="username">Usuário</label>
-                <span class="input-icon">👤</span>
+                <span class="input-icon"><i class="fa-solid fa-user-tie" style="color: rgb(255, 212, 59);"></i></span>
                 <input
                     type="text"
                     id="username"
@@ -56,7 +55,7 @@
 
             <div class="input-group">
                 <label for="password">Senha</label>
-                <span class="input-icon">🔒</span>
+                <span class="input-icon"><i class="fa-solid fa-lock" style="color: rgb(255, 212, 59);"></i></span>
                 <input
                     type="password"
                     id="password"

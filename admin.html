@@ -6,6 +6,7 @@
     <meta name="description" content="Painel administrativo - Gerencie os produtos da Bodega do Galego">
     <title>Dashboard Admin - Bodega do Galego</title>
     <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="css/admin.css">
     <!-- Prevenir flash de tema errado -->
     <script>
@@ -23,10 +24,10 @@
         </h2>
         <nav class="admin-nav">
             <button class="btn-tema" title="Alternar modo escuro" aria-label="Alternar modo escuro">
-                <span class="tema-icon">🌙</span>
+                <span class="tema-icon"></span>
             </button>
-            <a href="index.html">🏪 Ver Vitrine</a>
-            <a href="#" id="btn-logout" class="btn-logout">🚪 Sair</a>
+            <a href="index.html"><i class="fa-solid fa-store" style="color: rgb(255, 212, 59);"></i> Ver Vitrine</a>
+            <a href="#" id="btn-logout" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket" style="color: rgb(255, 45, 45);"></i> Sair</a>
         </nav>
     </header>
 
@@ -50,7 +51,7 @@
     <div class="main-content">
         <!-- Product Form -->
         <div class="box">
-            <h2 class="box-title box-title-form">➕ Novo Produto</h2>
+            <h2 class="box-title box-title-form"><i class="fa-solid fa-plus"></i> Novo Produto</h2>
             <form id="product-form" class="product-form">
                 <input type="hidden" id="prod-id">
 
@@ -87,6 +88,7 @@
                     <option value="Cabos">Cabos</option>
                     <option value="Fones">Fones</option>
                     <option value="TV e Áudio">TV e Áudio</option>
+                    <option value="Reparos">Reparos e serviços</option>
                 </select>
 
                 <input
@@ -98,17 +100,17 @@
 
                 <div id="image-preview-wrapper" class="image-preview-wrapper">
                     <img id="img-preview" src="" alt="Preview" style="display: none;">
-                    <span class="placeholder-text">📷 Preview da imagem aparecerá aqui</span>
+                    <span class="placeholder-text"><i class="fa-solid fa-camera"></i> Preview da imagem aparecerá aqui</span>
                 </div>
 
-                <button type="submit" class="btn-salvar" id="btn-submit">➕ Adicionar Produto</button>
+                <button type="submit" class="btn-salvar" id="btn-submit"> <i class="fa-solid fa-plus"></i> Adicionar Produto</button>
                 <button type="button" id="btn-cancelar" class="btn-cancelar">✖ Cancelar Edição</button>
             </form>
         </div>
 
         <!-- Products Table -->
         <div class="box">
-            <h2 class="box-title">📦 Produtos Cadastrados</h2>
+            <h2 class="box-title"><i class="fa-solid fa-box-open" style="color: rgb(71, 46, 22);"></i> Produtos Cadastrados</h2>
             <div class="table-wrapper">
                 <table class="admin-table">
                     <thead>
