@@ -44,11 +44,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 senha,
                 role: 'user'
             };
-        usuarios.push(user);
-        salvarusuarios(usuarios);
+            usuarios.push(user);
+            salvarusuarios(usuarios);
         }
        
-        // Login Conectado ao Json
+        // menssagem de erro 
+        else if (user.senha !== senha){
+              // Mostrar erro com animação
+              erroMsg.textContent = '⚠️ Usuário ou senha incorretos!';
+              erroMsg.style.display = 'block';
+
+              card.classList.add('shake');
+              setTimeout(function () {
+                card.classList.remove('shake');
+            }, 500);
+            return;
+             
+
+        }
+ 
         if (user){
                sessionStorage.setItem('logado', 'true');
                sessionStorage.setItem('usuario', user.usuario);
@@ -59,17 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
                   } else {
                   window.location.href = 'index.html';
                 }
-            } else {
-              // Mostrar erro com animação
-              erroMsg.textContent = '⚠️ Usuário ou senha incorretos!';
-              erroMsg.style.display = 'block';
-
-              card.classList.add('shake');
-              setTimeout(function () {
-                card.classList.remove('shake');
-            }, 500);
-             
-
         }
+
     });
 });
