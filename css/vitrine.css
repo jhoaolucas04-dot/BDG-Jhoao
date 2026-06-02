@@ -118,7 +118,7 @@
 
 .carousel-info {
     flex: 1;
-    color: #FAF0DC;
+    color: var(--text-dark); /* Agora ele muda conforme o tema ativo! */
 }
 
 .carousel-badge {
@@ -182,7 +182,7 @@
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(250, 240, 220, 0.15);
-    color: #FAF0DC;
+    color: #f9f5ee;
     width: 44px;
     height: 44px;
     border-radius: 50%;
@@ -235,7 +235,7 @@
 .carousel-fallback {
     text-align: center;
     padding: 20px 40px;
-    color: #FAF0DC;
+    color: #f9eed8;
 }
 
 .carousel-fallback h2 {

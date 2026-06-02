@@ -15,142 +15,139 @@ document.addEventListener('DOMContentLoaded', async function () {
     // ===== CARROSSEL =====
     function renderCarrossel() {
         var produtos = getProdutos();
-        var destaques = produtos.filter(function (p) {
-            return p.status === 'Disponível' && p.imagem;
-        }).slice(0, 5);
+        var destaques = [];
 
-        var carousel = document.getElementById('carousel');
+        // 1. Verifica se existe ALGUM produto ativo/disponível na categoria "Reparos"
+        var temReparosAtivo = produtos.some(function (p) {
+            return p.status === 'Disponível' && (p.categoria || '').trim().toLowerCase() === 'reparos';
+        });
+
+        // 2. Se houver reparos, inserimos um objeto "fake/fictício" que representará o BANNER no início do array
+        if (temReparosAtivo) {
+            destaques.push({
+                isBannerReparos: true,
+                categoria: 'Reparos'
+            });
+        }
+
+        // 3. Filtra os demais produtos normais que estão disponíveis e que NÃO sejam da categoria Reparos
+        var outrosProdutos = produtos.filter(function (p) {
+            var ehReparos = (p.categoria || '').trim().toLowerCase() === 'reparos';
+            return p.status === 'Disponível' && !ehReparos && p.imagem;
+        });
+
+        // 4. Junta o Banner de Reparos (se houver) com os outros produtos normais e limita a 5 itens no total
+        destaques = destaques.concat(outrosProdutos).slice(0, 5);
+
         var track = document.getElementById('carousel-track');
         var dotsContainer = document.getElementById('carousel-dots');
 
         if (destaques.length === 0) {
-            // Fallback: banner estático
-            track.innerHTML = '<div class="carousel-fallback"><img src="img/banner bodega do galego.png" alt="Bodega do Galego" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'"></div>';
-            document.getElementById('carousel-prev').style.display = 'none';
-            document.getElementById('carousel-next').style.display = 'none';
-            dotsContainer.style.display = 'none';
+            // Fallback: banner estático se não houver absolutamente nada ativo
+            if (track) {
+                track.innerHTML = '<div class="carousel-fallback"><img src="img/banner bodega do galego.png" alt="Bodega do Galego" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'"></div>';
+            }
+            if (document.getElementById('carousel-prev')) document.getElementById('carousel-prev').style.display = 'none';
+            if (document.getElementById('carousel-next')) document.getElementById('carousel-next').style.display = 'none';
+            if (dotsContainer) dotsContainer.style.display = 'none';
             return;
         }
 
-        track.innerHTML = '';
-        dotsContainer.innerHTML = '';
+        if (track) track.innerHTML = '';
+        if (dotsContainer) dotsContainer.innerHTML = '';
 
         destaques.forEach(function (p, i) {
-            var linkWhats = 'https://wa.me/' + numeroWhatsapp + '?text=' +
-                encodeURIComponent('Olá, tenho interesse no produto: ' + p.nome + ' no valor de R$ ' + p.preco.toFixed(2));
-
             var slide = document.createElement('div');
             slide.className = 'carousel-slide';
-            slide.innerHTML =
-                '<div class="carousel-img-wrapper">' +
-                    '<img src="' + p.imagem + '" alt="' + p.nome + '" class="carousel-img" onerror="this.style.display=\'none\'">' +
-                '</div>' +
-                '<div class="carousel-info">' +
-                    '<span class="carousel-badge"><i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i> Destaque</span>' +
-                    '<h2 class="carousel-name">' + p.nome + '</h2>' +
-                    '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>' +
-                    '<a href="' + linkWhats + '" target="_blank" class="carousel-whatsapp">💬 Comprar via WhatsApp</a>' +
-                '</div>';
-            track.appendChild(slide);
 
-            // Dot
-            var dot = document.createElement('button');
-            dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-            dot.setAttribute('aria-label', 'Slide ' + (i + 1));
-            dot.dataset.index = i;
-            dotsContainer.appendChild(dot);
+            // VERIFICAÇÃO: Se for o objeto identificador do banner de Reparos
+            if (p.isBannerReparos) {
+                
+                // Caminho da imagem do seu banner de reparos e link personalizado do WhatsApp
+                var imagemBanner = 'img/banner-reparos.png'; 
+                var linkWhatsReparo = 'https://wa.me/' + numeroWhatsapp + '?text=' + encodeURIComponent('Olá, gostaria de fazer um orçamento para um reparo/conserto de aparelho.');
+
+                // Ajusta estilos do slide para o banner cobrir todo o espaço de forma elegante
+                slide.style.padding = '0';
+                slide.style.display = 'block';
+                
+                slide.innerHTML = 
+                    '<a href="' + linkWhatsReparo + '" target="_blank" style="display:block; width:100%; height:100%; min-height:280px;">' +
+                        '<img src="' + imagemBanner + '" alt="Serviços de Reparos" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:inherit;">' +
+                    '</a>';
+
+            } else {
+                // ESTRUTURA PADRÃO: Qualquer outro produto comum de outras categorias
+                var linkWhats = 'https://wa.me/' + numeroWhatsapp + '?text=' +
+                    encodeURIComponent('Olá, tenho interesse no produto: ' + p.nome + ' no valor de R$ ' + p.preco.toFixed(2));
+
+                slide.innerHTML =
+                    '<div class="carousel-img-wrapper">' +
+                        '<img src="' + p.imagem + '" alt="' + p.nome + '" class="carousel-img" onerror="this.style.display=\'none\'">' +
+                    '</div>' +
+                    '<div class="carousel-info">' +
+                        '<span class="carousel-badge"><i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i> ' + p.categoria + '</span>' +
+                        '<h2 class="carousel-name">' + p.nome + '</h2>' +
+                        '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>' +
+                        '<a href="' + linkWhats + '" target="_blank" class="carousel-whatsapp">💬 Comprar via WhatsApp</a>' +
+                    '</div>';
+            }
+
+            if (track) track.appendChild(slide);
+
+            // Criar Dot (Bolinhas de navegação do carrossel)
+            if (dotsContainer) {
+                var dot = document.createElement('button');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+                dot.dataset.index = i;
+                dotsContainer.appendChild(dot);
+            }
         });
 
-        // ===== Carousel Controls =====
+        // ===== Lógica de Movimentação e Controles do Carrossel =====
         var currentSlide = 0;
         var totalSlides = destaques.length;
-        var autoPlayTimer;
 
         function goToSlide(index) {
             currentSlide = index;
-            track.style.transform = 'translateX(-' + (index * 100) + '%)';
-            var dots = dotsContainer.querySelectorAll('.carousel-dot');
-            for (var d = 0; d < dots.length; d++) {
-                if (d === index) {
-                    dots[d].classList.add('active');
-                } else {
-                    dots[d].classList.remove('active');
+            if (track) track.style.transform = 'translateX(-' + (index * 100) + '%)';
+            if (dotsContainer) {
+                var dots = dotsContainer.querySelectorAll('.carousel-dot');
+                for (var d = 0; d < dots.length; d++) {
+                    if (d === index) {
+                        dots[d].classList.add('active');
+                    } else {
+                        dots[d].classList.remove('active');
+                    }
                 }
             }
         }
 
-        function nextSlide() {
-            goToSlide((currentSlide + 1) % totalSlides);
+        var btnNext = document.getElementById('carousel-next');
+        var btnPrev = document.getElementById('carousel-prev');
+        
+        if (btnNext && btnPrev) {
+            var newNext = btnNext.cloneNode(true);
+            var newPrev = btnPrev.cloneNode(true);
+            btnNext.parentNode.replaceChild(newNext, btnNext);
+            btnPrev.parentNode.replaceChild(newPrev, btnPrev);
+
+            newNext.addEventListener('click', function () {
+                goToSlide((currentSlide + 1) % totalSlides);
+            });
+            newPrev.addEventListener('click', function () {
+                goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+            });
         }
-
-        function prevSlide() {
-            goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
-        }
-
-        // Arrow buttons
-        document.getElementById('carousel-next').addEventListener('click', function () {
-            nextSlide();
-            restartAutoPlay();
-        });
-
-        document.getElementById('carousel-prev').addEventListener('click', function () {
-            prevSlide();
-            restartAutoPlay();
-        });
-
-        // Dots
-        dotsContainer.addEventListener('click', function (e) {
-            var dot = e.target.closest('.carousel-dot');
-            if (!dot) return;
-            goToSlide(parseInt(dot.dataset.index));
-            restartAutoPlay();
-        });
-
-        // Auto-play
-        function startAutoPlay() {
-            autoPlayTimer = setInterval(nextSlide, 4000);
-        }
-
-        function stopAutoPlay() {
-            clearInterval(autoPlayTimer);
-        }
-
-        function restartAutoPlay() {
-            stopAutoPlay();
-            startAutoPlay();
-        }
-
-        // Pause on hover
-        carousel.addEventListener('mouseenter', stopAutoPlay);
-        carousel.addEventListener('mouseleave', startAutoPlay);
-
-        // Touch/swipe support
-        var touchStartX = 0;
-        var touchEndX = 0;
-
-        carousel.addEventListener('touchstart', function (e) {
-            touchStartX = e.changedTouches[0].screenX;
-            stopAutoPlay();
-        }, { passive: true });
-
-        carousel.addEventListener('touchend', function (e) {
-            touchEndX = e.changedTouches[0].screenX;
-            var diff = touchStartX - touchEndX;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) { nextSlide(); }
-                else { prevSlide(); }
-            }
-            startAutoPlay();
-        }, { passive: true });
-
-        // Start
-        startAutoPlay();
     }
 
     // ===== PRODUTOS =====
     function renderProdutos(textoBusca) {
         textoBusca = textoBusca || '';
         var container = document.getElementById('vitrine-container');
+        if (!container) return;
+        
         var produtos = getProdutos();
         container.innerHTML = '';
 
@@ -196,25 +193,31 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // ===== Filtro de Categorias =====
     var categoryContainer = document.getElementById('category-container');
-    categoryContainer.addEventListener('click', function (e) {
-        var item = e.target.closest('.category-item');
-        if (!item) return;
+    if (categoryContainer) {
+        categoryContainer.addEventListener('click', function (e) {
+            var item = e.target.closest('.category-item');
+            if (!item) return;
 
-        categoriaAtual = item.dataset.categoria;
+            categoriaAtual = item.dataset.categoria;
 
-        var items = categoryContainer.querySelectorAll('.category-item');
-        for (var i = 0; i < items.length; i++) {
-            items[i].classList.remove('active');
-        }
-        item.classList.add('active');
+            var items = categoryContainer.querySelectorAll('.category-item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].classList.remove('active');
+            }
+            item.classList.add('active');
 
-        renderProdutos(document.getElementById('search').value);
-    });
+            var searchInput = document.getElementById('search');
+            renderProdutos(searchInput ? searchInput.value : '');
+        });
+    }
 
     // ===== Busca =====
-    document.getElementById('search').addEventListener('input', function (e) {
-        renderProdutos(e.target.value);
-    });
+    var searchInput = document.getElementById('search');
+    if (searchInput) {
+        searchInput.addEventListener('input', function (e) {
+            renderProdutos(e.target.value);
+        });
+    }
 
     // ===== Inicialização =====
     renderCarrossel();
