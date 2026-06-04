@@ -216,7 +216,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
     }
 
-    // ===== Inicialização =====
-    renderCarrossel();
-    renderProdutos();
+    // ===== Inicialização e Sincronização em Tempo Real =====
+    registrarListenerProdutos(function () {
+        renderCarrossel();
+        renderProdutos();
+    });
 });

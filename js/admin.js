@@ -108,19 +108,25 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
 
         tbody.querySelectorAll('.btn-toggle').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                alternarStatus(parseInt(this.dataset.id));
-                renderTabela();
-                mostrarToast('Status alterado!', 'success');
+            btn.addEventListener('click', async function () {
+                try {
+                    await alternarStatus(parseInt(this.dataset.id));
+                    mostrarToast('Status alterado!', 'success');
+                } catch (e) {
+                    mostrarToast('Erro ao alterar status!', 'danger');
+                }
             });
         });
 
         tbody.querySelectorAll('.btn-delete').forEach(function (btn) {
-            btn.addEventListener('click', function () {
+            btn.addEventListener('click', async function () {
                 if (confirm('Tem certeza que deseja excluir este produto?')) {
-                    deletarProduto(parseInt(this.dataset.id));
-                    renderTabela();
-                    mostrarToast('Produto excluído!', 'danger');
+                    try {
+                        await deletarProduto(parseInt(this.dataset.id));
+                        mostrarToast('Produto excluído!', 'danger');
+                    } catch (e) {
+                        mostrarToast('Erro ao excluir produto!', 'danger');
+                    }
                 }
             });
         });
@@ -164,7 +170,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     // ===== Submissão do Formulário =====
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const dados = {
@@ -179,16 +185,23 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         if (editId) {
             // Modo edição
-            editarProduto(parseInt(editId), dados);
-            mostrarToast('Produto atualizado com sucesso!', 'success');
+            try {
+                await editarProduto(parseInt(editId), dados);
+                mostrarToast('Produto atualizado com sucesso!', 'success');
+                resetarFormulario();
+            } catch (e) {
+                mostrarToast('Erro ao atualizar produto!', 'danger');
+            }
         } else {
             // Modo inserção
-            adicionarProduto(dados);
-            mostrarToast('Produto adicionado com sucesso!', 'success');
+            try {
+                await adicionarProduto(dados);
+                mostrarToast('Produto adicionado com sucesso!', 'success');
+                resetarFormulario();
+            } catch (e) {
+                mostrarToast('Erro ao adicionar produto!', 'danger');
+            }
         }
-
-        resetarFormulario();
-        renderTabela();
     });
 
     // ===== Cancelar Edição =====
@@ -222,6 +235,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         }, 2500);
     }
 
-    // ===== Inicialização =====
-    renderTabela();
+    // ===== Inicialização e Sincronização em Tempo Real =====
+    registrarListenerProdutos(function () {
+        renderTabela();
+    });
 });
