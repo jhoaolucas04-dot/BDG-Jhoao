@@ -10,11 +10,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // ===== Variáveis =====
     var categoriaAtual = 'Todos';
-<<<<<<< Updated upstream
-    var numeroWhatsapp = '5581999999999'; // DDD Recife/PE
-=======
-    var numeroWhatsapp = '5581984696025'; // DDD Recife/PE
->>>>>>> Stashed changes
+    var numeroWhatsapp = '5581984696025'; // DDD Recife/
 
     // ===== CARROSSEL =====
     function renderCarrossel() {
@@ -62,17 +58,21 @@ document.addEventListener('DOMContentLoaded', async function () {
                 var linkWhats = 'https://wa.me/' + numeroWhatsapp + '?text=' +
                     encodeURIComponent('Olá, tenho interesse no produto: ' + p.nome + ' no valor de R$ ' + p.preco.toFixed(2));
 
-                slide.innerHTML =
-                    '<div class="carousel-img-wrapper">' +
-                        '<img src="' + p.imagem + '" alt="' + p.nome + '" class="carousel-img" onerror="this.style.display=\'none\'">' +
-                    '</div>' +
-                    '<div class="carousel-info">' +
-                        '<span class="carousel-badge"><i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i> ' + p.categoria + '</span>' +
-                        '<h2 class="carousel-name">' + p.nome + '</h2>' +
-                        '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>' +
-                        '<a href="' + linkWhats + '" target="_blank" class="carousel-whatsapp">💬 Comprar via WhatsApp</a>' +
-                    '</div>';
+               
+                    slide.innerHTML =
+    '<div class="carousel-img-wrapper">' +
+        '<img src="' + p.imagem + '" alt="' + p.nome + '" class="carousel-img" onerror="this.style.display=\'none\'">' +
+    '</div>' +
+    '<div class="carousel-info">' +
+        '<span class="carousel-badge"><i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i> ' + p.categoria + '</span>' +
+        '<h2 class="carousel-name">' + p.nome + '</h2>' +
+        '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>' +
+        '<a href="' + linkWhats + '" target="_blank" class="carousel-whatsapp"><i class="fa-regular fa-comment-dots"></i> Comprar via WhatsApp</a>' +
+    '</div>';
+                
             }
+
+//vendo os ícones 
 
             if (track) track.appendChild(slide);
 
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     '<h3 class="product-name">' + p.nome + '</h3>' +
                     '<div class="product-price">R$ ' + p.preco.toFixed(2) + '</div>' +
                     '<a href="' + (isEsgotado ? '#' : linkWhats) + '" ' + (isEsgotado ? '' : 'target="_blank"') + ' class="btn-whatsapp ' + (isEsgotado ? 'esgotado' : '') + '">' +
-                        (isEsgotado ? '<i class="fa-solid fa-triangle-exclamation" style="color: rgb(255, 212, 59);"></i> Esgotado' : '💬 Comprar via WhatsApp') +
+                        (isEsgotado ? '<i class="fa-solid fa-triangle-exclamation" style="color: rgb(255, 212, 59);"></i> Esgotado' : '<i class="fa-solid fa-comments-dollar"></i> Comprar via WhatsApp') +
                     '</a>' +
                 '</div>';
 
@@ -220,9 +220,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
     }
 
-    // ===== Inicialização e Sincronização em Tempo Real =====
-    registrarListenerProdutos(function () {
-        renderCarrossel();
-        renderProdutos();
-    });
+    // ===== Inicialização =====
+    renderCarrossel();
+    renderProdutos();
 });

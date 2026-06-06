@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="css/vitrine.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css">
-    <!-- Prevenir flash de tema errado -->
     <script>
         (function () { var t = localStorage.getItem('bodega_tema'); if (t) { document.documentElement.setAttribute('data-theme', t) } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark') } })();
     </script>
@@ -20,13 +19,22 @@
 
 <body>
 
-    <!-- Header -->
     <header class="vitrine-header">
         <div class="logo">
             <img src="img/logo.jpeg" alt="Bodega do Galego" class="logo-img">
             Bodega do <span>Galego</span>
         </div>
-        <input type="text" id="search" class="search-bar" placeholder="Buscar produtos...">
+        
+        <div class="search-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon-left"></i>
+            <input
+                type="text"
+                id="search"
+                class="search-bar"
+                placeholder="Buscar produtos..."
+            >
+        </div>
+
         <div class="header-actions">
             <button class="btn-tema" title="Alternar modo escuro" aria-label="Alternar modo escuro">
                 <span class="tema-icon"></span>
@@ -36,17 +44,14 @@
         </div>
     </header>
 
-    <!-- Carrossel de Produtos (substituiu o banner) -->
     <section class="carousel" id="carousel">
         <div class="carousel-track" id="carousel-track">
-            <!-- Populado pelo JS -->
-        </div>
+            </div>
         <button class="carousel-btn carousel-prev" id="carousel-prev" aria-label="Slide anterior">❮</button>
         <button class="carousel-btn carousel-next" id="carousel-next" aria-label="Próximo slide">❯</button>
         <div class="carousel-dots" id="carousel-dots"></div>
     </section>
 
-    <!-- Categories -->
     <section class="categories">
         <h2>Categorias</h2>
         <div class="category-list" id="category-container">
@@ -60,23 +65,15 @@
         </div>
     </section>
 
-    <!-- Product Grid -->
     <main class="vitrine" id="vitrine-container">
     </main>
 
-    <!-- Footer -->
     <footer class="vitrine-footer">
         <p>© 2025 Bodega do Galego — Todos os direitos reservados</p>
     </footer>
 
-    <!-- Firebase SDKs (Compat) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-    <!-- Scripts -->
     <script src="js/dados.js"></script>
     <script src="js/tema.js"></script>
     <script src="js/vitrine.js"></script>
 </body>
-
 </html>
