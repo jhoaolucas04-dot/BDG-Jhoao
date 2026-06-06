@@ -74,7 +74,7 @@
     box-shadow: 0 4px 16px var(--primary-glow);
 }
 
-/* ===== Carousel ===== */
+/* ===== Carrosel ===== */
 .carousel {
     margin: 20px 5% 12px 5%;
     border-radius: var(--radius-lg);
@@ -399,7 +399,7 @@
     color: #fff;
     font-size: 11px;
     font-weight: 700;
-    padding: 4px 10px;
+    padding: 4px 20px;
     border-radius: var(--radius-full);
     backdrop-filter: blur(4px);
 }
@@ -461,6 +461,7 @@
     text-align: center;
     background: var(--whatsapp);
     color: #fff;
+    rigth: 25px;
 }
 
 .btn-whatsapp:hover {
@@ -621,4 +622,28 @@
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 12px;
     }
+}
+/* ===== Posicionamento da Lupa Interna ===== */
+.search-wrapper {
+    position: relative;
+    flex: 1;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon-left {
+    position: absolute;
+    left: 18px;
+    font-size: 14px;
+    color: var(--text-muted);
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Força o input a dar espaço interno para a lupa na esquerda */
+.search-bar {
+    width: 100%;
+    max-width: 480px;
+    padding: 11px 20px 11px 44px !important;
 }
