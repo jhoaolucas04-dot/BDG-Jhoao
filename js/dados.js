@@ -22,8 +22,10 @@ let produtosCache = [];
 let onProdutosAtualizadosCallback = null;
 let initialized = false;
 let resolveInitPromise;
+let modoLocal = false;
+let timeoutFirebase = null;
 
-// Promise global que resolve quando os dados iniciais do Firestore são carregados
+// Promise global que resolve quando os dados iniciais do Firestore (ou Local) são carregados
 const initPromise = new Promise((resolve) => {
     resolveInitPromise = resolve;
 });
@@ -40,42 +42,104 @@ function registrarListenerProdutos(callback) {
     }
 }
 
-// Inicializa o SDK do Firebase Compat e o Cloud Firestore
-if (typeof firebase !== 'undefined') {
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
-    db = firebase.firestore();
+/**
+ * Ativa o modo local de forma segura, carregando dados do localStorage ou de produtos.json
+ * @param {string} motivo
+ */
+async function ativarModoLocal(motivo) {
+    if (modoLocal || (initialized && produtosCache.length > 0)) return;
+    modoLocal = true;
+    initialized = true;
+    console.warn("Ativando modo local. Motivo: " + motivo);
 
-    // Escuta a coleção "produtos" em tempo real
-    db.collection("produtos").onSnapshot(async (snapshot) => {
-        if (snapshot.empty && !initialized) {
-            // Banco de dados novo/vazio: semeia com os dados de produtos.json
-            initialized = true;
-            console.log("Banco de dados vazio no Firestore. Semeando dados iniciais...");
-            await semearBancoDeDados();
-            return;
+    if (timeoutFirebase) {
+        clearTimeout(timeoutFirebase);
+    }
+
+    try {
+        let localData = localStorage.getItem('bodega_produtos');
+        if (localData) {
+            produtosCache = JSON.parse(localData);
+            console.log("Dados carregados com sucesso do localStorage.");
+        } else {
+            console.log("LocalStorage vazio. Semeando dados locais a partir de produtos.json...");
+            const resp = await fetch('produtos.json');
+            if (resp.ok) {
+                produtosCache = await resp.json();
+                localStorage.setItem('bodega_produtos', JSON.stringify(produtosCache));
+            } else {
+                throw new Error("Falha ao buscar produtos.json para semeadura local.");
+            }
         }
 
-        produtosCache = [];
-        snapshot.forEach((doc) => {
-            produtosCache.push(doc.data());
-        });
-
-        // Garante a ordenação crescente por ID numérico
         produtosCache.sort((a, b) => a.id - b.id);
-
-        initialized = true;
         resolveInitPromise(produtosCache);
 
         if (onProdutosAtualizadosCallback) {
             onProdutosAtualizadosCallback(produtosCache);
         }
-    }, (error) => {
-        console.error("Erro no listener em tempo real do Firestore:", error);
-    });
+    } catch (e) {
+        console.error("Erro crítico na inicialização do modo local:", e);
+        produtosCache = [];
+        resolveInitPromise([]);
+    }
+}
+
+// Inicializa o SDK do Firebase Compat e o Cloud Firestore se disponível
+if (typeof firebase !== 'undefined') {
+    try {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        db = firebase.firestore();
+
+        // Inicia o timer de timeout para fallback
+        timeoutFirebase = setTimeout(() => {
+            if (!initialized) {
+                ativarModoLocal("Tempo limite de resposta do Firebase expirado.");
+            }
+        }, 3500);
+
+        // Escuta a coleção "produtos" em tempo real
+        db.collection("produtos").onSnapshot(async (snapshot) => {
+            if (timeoutFirebase) {
+                clearTimeout(timeoutFirebase);
+            }
+
+            if (snapshot.empty && !initialized) {
+                initialized = true;
+                console.log("Banco de dados vazio no Firestore. Semeando dados iniciais...");
+                await semearBancoDeDados();
+                return;
+            }
+
+            produtosCache = [];
+            snapshot.forEach((doc) => {
+                produtosCache.push(doc.data());
+            });
+
+            produtosCache.sort((a, b) => a.id - b.id);
+
+            // Espelha no localStorage para que, se cair a conexão depois, tenhamos os dados atualizados do servidor
+            localStorage.setItem('bodega_produtos', JSON.stringify(produtosCache));
+
+            initialized = true;
+            resolveInitPromise(produtosCache);
+
+            if (onProdutosAtualizadosCallback) {
+                onProdutosAtualizadosCallback(produtosCache);
+            }
+        }, (error) => {
+            console.error("Erro no listener em tempo real do Firestore:", error);
+            ativarModoLocal("Erro retornado pelo listener do Firestore: " + error.message);
+        });
+    } catch (err) {
+        console.error("Erro ao configurar Firebase:", err);
+        ativarModoLocal("Exceção ao configurar Firebase: " + err.message);
+    }
 } else {
     console.error("Firebase SDK não carregado! Verifique as referências do CDN no HTML.");
+    ativarModoLocal("Firebase SDK não carregado (bloqueado pelo Brave Shields/Adblocker).");
 }
 
 /**
@@ -104,6 +168,7 @@ async function semearBancoDeDados() {
         console.log("Banco de dados do Firestore inicializado com sucesso!");
     } catch (erro) {
         console.error('Erro ao semear o banco de dados no Firestore:', erro);
+        ativarModoLocal("Erro ao semear banco de dados no Firestore.");
     }
 }
 
@@ -125,7 +190,7 @@ function getProdutos() {
 }
 
 /**
- * Adiciona um novo produto no Firestore.
+ * Adiciona um novo produto.
  * @param {Object} dados — { nome, preco, estoque, categoria, imagem }
  */
 async function adicionarProduto(dados) {
@@ -139,20 +204,53 @@ async function adicionarProduto(dados) {
         imagem: dados.imagem || '',
         status: parseInt(dados.estoque) > 0 ? 'Disponível' : 'Esgotado'
     };
+
+    if (modoLocal) {
+        produtosCache.push(novoProduto);
+        produtosCache.sort((a, b) => a.id - b.id);
+        localStorage.setItem('bodega_produtos', JSON.stringify(produtosCache));
+        if (onProdutosAtualizadosCallback) {
+            onProdutosAtualizadosCallback(produtosCache);
+        }
+        return;
+    }
+
     try {
         await db.collection("produtos").doc(id.toString()).set(novoProduto);
     } catch (e) {
-        console.error("Erro ao adicionar produto no Firestore:", e);
-        throw e;
+        console.error("Erro ao adicionar no Firestore. Mudando para modo local e tentando novamente...", e);
+        ativarModoLocal("Erro ao adicionar produto: " + e.message);
+        await adicionarProduto(dados);
     }
 }
 
 /**
- * Edita um produto existente pelo ID no Firestore.
+ * Edita um produto existente pelo ID.
  * @param {number} id
  * @param {Object} dados — campos a atualizar
  */
 async function editarProduto(id, dados) {
+    if (modoLocal) {
+        const index = produtosCache.findIndex(p => p.id === id);
+        if (index !== -1) {
+            const current = produtosCache[index];
+            if (dados.nome !== undefined) current.nome = dados.nome;
+            if (dados.preco !== undefined) current.preco = parseFloat(dados.preco);
+            if (dados.estoque !== undefined) {
+                current.estoque = parseInt(dados.estoque);
+                current.status = parseInt(dados.estoque) > 0 ? 'Disponível' : 'Esgotado';
+            }
+            if (dados.categoria !== undefined) current.categoria = dados.categoria;
+            if (dados.imagem !== undefined) current.imagem = dados.imagem;
+            
+            localStorage.setItem('bodega_produtos', JSON.stringify(produtosCache));
+            if (onProdutosAtualizadosCallback) {
+                onProdutosAtualizadosCallback(produtosCache);
+            }
+        }
+        return;
+    }
+
     try {
         const docRef = db.collection("produtos").doc(id.toString());
         const updateData = {};
@@ -167,30 +265,60 @@ async function editarProduto(id, dados) {
 
         await docRef.update(updateData);
     } catch (e) {
-        console.error("Erro ao editar produto no Firestore:", e);
-        throw e;
+        console.error("Erro ao editar no Firestore. Mudando para modo local e tentando novamente...", e);
+        ativarModoLocal("Erro ao editar produto: " + e.message);
+        await editarProduto(id, dados);
     }
 }
 
 /**
- * Deleta um produto pelo ID no Firestore.
+ * Deleta um produto pelo ID.
  * @param {number} id
  */
 async function deletarProduto(id) {
+    if (modoLocal) {
+        produtosCache = produtosCache.filter(p => p.id !== id);
+        localStorage.setItem('bodega_produtos', JSON.stringify(produtosCache));
+        if (onProdutosAtualizadosCallback) {
+            onProdutosAtualizadosCallback(produtosCache);
+        }
+        return;
+    }
+
     try {
         await db.collection("produtos").doc(id.toString()).delete();
     } catch (e) {
-        console.error("Erro ao deletar produto no Firestore:", e);
-        throw e;
+        console.error("Erro ao deletar no Firestore. Mudando para modo local e tentando novamente...", e);
+        ativarModoLocal("Erro ao deletar produto: " + e.message);
+        await deletarProduto(id);
     }
 }
 
 /**
- * Alterna o status do produto entre Disponível e Esgotado no Firestore.
+ * Alterna o status do produto entre Disponível e Esgotado.
  * Se ficar Disponível com estoque 0, define estoque = 10.
  * @param {number} id
  */
 async function alternarStatus(id) {
+    if (modoLocal) {
+        const index = produtosCache.findIndex(p => p.id === id);
+        if (index !== -1) {
+            const current = produtosCache[index];
+            const novoStatus = current.status === 'Disponível' ? 'Esgotado' : 'Disponível';
+            let novoEstoque = current.estoque;
+            if (novoStatus === 'Disponível' && current.estoque === 0) {
+                novoEstoque = 10;
+            }
+            current.status = novoStatus;
+            current.estoque = novoEstoque;
+            localStorage.setItem('bodega_produtos', JSON.stringify(produtosCache));
+            if (onProdutosAtualizadosCallback) {
+                onProdutosAtualizadosCallback(produtosCache);
+            }
+        }
+        return;
+    }
+
     try {
         const docRef = db.collection("produtos").doc(id.toString());
         const doc = await docRef.get();
@@ -207,7 +335,8 @@ async function alternarStatus(id) {
             });
         }
     } catch (e) {
-        console.error("Erro ao alternar status no Firestore:", e);
-        throw e;
+        console.error("Erro ao alternar status no Firestore. Mudando para modo local e tentando novamente...", e);
+        ativarModoLocal("Erro ao alternar status: " + e.message);
+        await alternarStatus(id);
     }
 }
