@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // ===== Variáveis =====
     var categoriaAtual = 'Todos';
-    var numeroWhatsapp = '558193757554'; // DDD Recife/PE
+    var numeroWhatsapp = '5581984696025'; // DDD Recife/
 
     // ===== CARROSSEL =====
     function renderCarrossel() {
