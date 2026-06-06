@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // ===== Variáveis =====
     var categoriaAtual = 'Todos';
+<<<<<<< Updated upstream
     var numeroWhatsapp = '5581999999999'; // DDD Recife/PE
+=======
+    var numeroWhatsapp = '5581984696025'; // DDD Recife/PE
+>>>>>>> Stashed changes
 
     // ===== CARROSSEL =====
     function renderCarrossel() {
