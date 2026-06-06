@@ -38,7 +38,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             imgPreview.onerror = function () {
                 imgPreview.style.display = 'none';
-                previewWrapper.querySelector('.placeholder-text').textContent = '⚠️ URL inválida';
+               previewWrapper.querySelector('.placeholder-text').innerHTML =
+    '<i class="fa-solid fa-triangle-exclamation"></i> URL inválida';
                 previewWrapper.querySelector('.placeholder-text').style.display = 'block';
                 previewWrapper.classList.remove('has-image');
             };
@@ -151,17 +152,20 @@ document.addEventListener('DOMContentLoaded', async function () {
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function resetarFormulario() {
-        form.reset();
-        inputId.value = '';
-        btnCancelar.style.display = 'none';
-        document.querySelector('.box-title-form').textContent = '➕ Novo Produto';
-        document.getElementById('btn-submit').textContent = '➕ Adicionar Produto';
-        imgPreview.style.display = 'none';
-        previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
-        previewWrapper.querySelector('.placeholder-text').style.display = 'block';
-        previewWrapper.classList.remove('has-image');
-    }
+   function resetarFormulario() {
+    form.reset();
+    inputId.value = '';
+    btnCancelar.style.display = 'none';
+    
+    // Alterado para innerHTML para renderizar o ícone do Font Awesome corretamente
+    document.querySelector('.box-title-form').innerHTML = '<i class="fa-solid fa-plus"></i> Novo Produto';
+    document.getElementById('btn-submit').innerHTML = '<i class="fa-solid fa-plus"></i> Adicionar Produto';
+    
+    imgPreview.style.display = 'none';
+    previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
+    previewWrapper.querySelector('.placeholder-text').style.display = 'block';
+    previewWrapper.classList.remove('has-image');
+}
 
     // ===== Submissão do Formulário =====
     form.addEventListener('submit', function (e) {
