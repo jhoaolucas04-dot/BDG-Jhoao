@@ -11,9 +11,23 @@ document.addEventListener('DOMContentLoaded', async function () {
     // ===== Variáveis =====
     var categoriaAtual = 'Todos';
     var numeroWhatsapp = '5581984696025'; // DDD Recife/
+    var autoPlayTimer = null;
 
     // ===== CARROSSEL =====
     function renderCarrossel() {
+        // Limpar intervalo anterior se houver
+        if (autoPlayTimer) {
+            clearInterval(autoPlayTimer);
+            autoPlayTimer = null;
+        }
+
+        // Clonar o carrossel para remover listeners antigos e evitar múltiplos timers correndo
+        var carousel = document.getElementById('carousel');
+        if (carousel) {
+            var newCarousel = carousel.cloneNode(true);
+            carousel.parentNode.replaceChild(newCarousel, carousel);
+        }
+
         var produtos = getProdutos();
 
         // 1. Banner de reparos sempre primeiro
@@ -126,14 +140,17 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         // Auto-play
-        var autoPlayTimer = setInterval(function () {
+        autoPlayTimer = setInterval(function () {
             goToSlide((currentSlide + 1) % totalSlides);
         }, 4000);
 
         var carousel = document.getElementById('carousel');
         if (carousel) {
-            carousel.addEventListener('mouseenter', function () { clearInterval(autoPlayTimer); });
+            carousel.addEventListener('mouseenter', function () { 
+                if (autoPlayTimer) clearInterval(autoPlayTimer); 
+            });
             carousel.addEventListener('mouseleave', function () {
+                if (autoPlayTimer) clearInterval(autoPlayTimer);
                 autoPlayTimer = setInterval(function () {
                     goToSlide((currentSlide + 1) % totalSlides);
                 }, 4000);
@@ -221,6 +238,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     // ===== Inicialização =====
-    renderCarrossel();
-    renderProdutos();
+    registrarListenerProdutos(function () {
+        renderCarrossel();
+        var searchInput = document.getElementById('search');
+        renderProdutos(searchInput ? searchInput.value : '');
+    });
 });

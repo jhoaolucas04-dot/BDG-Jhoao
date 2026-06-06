@@ -14,7 +14,7 @@
     <script>
         (function () { var t = localStorage.getItem('bodega_tema'); if (t) { document.documentElement.setAttribute('data-theme', t) } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark') } })();
     </script>
-    <link rel="icon" type="imagecon" href="img/logo.jpeg">
+    <link rel="icon" type="image/jpeg" href="img/logo.jpeg">
 </head>
 
 <body>
@@ -71,6 +71,10 @@
     <footer class="vitrine-footer">
         <p>© 2025 Bodega do Galego — Todos os direitos reservados</p>
     </footer>
+
+    <!-- Firebase SDKs (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script src="js/dados.js"></script>
     <script src="js/tema.js"></script>
