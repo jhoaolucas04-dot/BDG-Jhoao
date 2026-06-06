@@ -7,73 +7,53 @@ document.addEventListener('DOMContentLoaded', function () {
     const erroMsg = document.getElementById('login-erro');
     const card = document.querySelector('.login-card');
 
-    function carregarusuarios(){
-        return JSON.parse(localStorage.getItem ('usuarios')) || [];
-    }
+    // ===== LÓGICA DE MOSTRAR / ESCONDER SENHA =====
+    const inputSenha = document.getElementById('password');
+    const btnToggleSenha = document.getElementById('btn-toggle-password');
+    const iconeOlho = document.getElementById('eye-icon');
 
-    // Carregar usuários que estão em local storage
-    function salvarusuarios(usuarios){
-     localStorage.setItem('usuarios', JSON.stringify(usuarios));
-    }
-
-    let usuarios = carregarusuarios();
-
-    if (!usuarios.find(u => u.usuario === 'admin')) {
-        usuarios.push({
-        id: 1,
-        usuario: 'admin',
-        senha: 'admin123',
-        role: 'admin'
+    if (btnToggleSenha && inputSenha && iconeOlho) {
+        btnToggleSenha.addEventListener('click', function () {
+            if (inputSenha.type === 'password') {
+                inputSenha.type = 'text';
+                iconeOlho.classList.remove('fa-eye');
+                iconeOlho.classList.add('fa-eye-slash');
+                btnToggleSenha.setAttribute('aria-label', 'Esconder senha');
+            } else {
+                inputSenha.type = 'password';
+                iconeOlho.classList.remove('fa-eye-slash');
+                iconeOlho.classList.add('fa-eye');
+                btnToggleSenha.setAttribute('aria-label', 'Mostrar senha');
+            }
         });
-    salvarusuarios(usuarios);    
+    }
+    // ===============================================
+
+    // Se já estiver logado, vai direto pro admin
+    if (sessionStorage.getItem('logado') === 'true') {
+        window.location.href = 'admin.html';
+        return;
     }
 
-    form.addEventListener('submit', async function (e) {
+    form.addEventListener('submit', function (e) {
         e.preventDefault();
-    
-    
-        const usuario = document.getElementById('username').value.trim();
-        const senha = document.getElementById('password').value;
-        
-        let usuarios = carregarusuarios();
-        let user = usuarios.find(u => u.usuario === usuario);
-        
-        if (!user){
-            user = {
-                usuario,
-                senha,
-                role: 'user'
-            };
-            usuarios.push(user);
-            salvarusuarios(usuarios);
-        }
-       
-        // menssagem de erro 
-        else if (user.senha !== senha){
-              // Mostrar erro com animação
-              erroMsg.textContent = '⚠️ Usuário ou senha incorretos!';
-              erroMsg.style.display = 'block';
 
-              card.classList.add('shake');
-              setTimeout(function () {
+        const usuario = document.getElementById('username').value.trim();
+        const senha = inputSenha.value;
+
+        // Credenciais fixas
+        if (usuario === 'admin' && senha === 'admin123') {
+            sessionStorage.setItem('logado', 'true');
+            window.location.href = 'admin.html';
+        } else {
+            // Mostrar erro com animação
+            erroMsg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Usuário ou senha incorretos';
+            erroMsg.style.display = 'block';
+
+            card.classList.add('shake');
+            setTimeout(function () {
                 card.classList.remove('shake');
             }, 500);
-            return;
-             
-
         }
- 
-        if (user){
-               sessionStorage.setItem('logado', 'true');
-               sessionStorage.setItem('usuario', user.usuario);
-               sessionStorage.setItem('role', user.role || 'user');
-              
-                if (user.role === 'admin'){
-                  window.location.href = 'admin.html';
-                  } else {
-                  window.location.href = 'index.html';
-                }
-        }
-
     });
 });

@@ -10,147 +10,143 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // ===== Variáveis =====
     var categoriaAtual = 'Todos';
-    var numeroWhatsapp = '5581999999999'; // DDD Recife/PE
+    var numeroWhatsapp = '558193757554'; // DDD Recife/PE
 
     // ===== CARROSSEL =====
     function renderCarrossel() {
         var produtos = getProdutos();
-        var destaques = produtos.filter(function (p) {
-            return p.status === 'Disponível' && p.imagem;
-        }).slice(0, 5);
 
-        var carousel = document.getElementById('carousel');
+        // 1. Banner de reparos sempre primeiro
+        var destaques = [{
+            isBannerReparos: true,
+            categoria: 'Reparos'
+        }];
+
+        // 2. Filtra produtos disponíveis que não sejam da categoria Reparos
+        var outrosProdutos = produtos.filter(function (p) {
+            var ehReparos = (p.categoria || '').trim().toLowerCase() === 'reparos';
+            return p.status === 'Disponível' && !ehReparos && p.imagem;
+        });
+
+        // 3. Junta e limita a 5 itens
+        destaques = destaques.concat(outrosProdutos).slice(0, 5);
+
         var track = document.getElementById('carousel-track');
         var dotsContainer = document.getElementById('carousel-dots');
 
-        if (destaques.length === 0) {
-            // Fallback: banner estático
-            track.innerHTML = '<div class="carousel-fallback"><img src="img/banner bodega do galego.png" alt="Bodega do Galego" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'"></div>';
-            document.getElementById('carousel-prev').style.display = 'none';
-            document.getElementById('carousel-next').style.display = 'none';
-            dotsContainer.style.display = 'none';
-            return;
-        }
-
-        track.innerHTML = '';
-        dotsContainer.innerHTML = '';
+        if (track) track.innerHTML = '';
+        if (dotsContainer) dotsContainer.innerHTML = '';
 
         destaques.forEach(function (p, i) {
-            var linkWhats = 'https://wa.me/' + numeroWhatsapp + '?text=' +
-                encodeURIComponent('Olá, tenho interesse no produto: ' + p.nome + ' no valor de R$ ' + p.preco.toFixed(2));
-
             var slide = document.createElement('div');
             slide.className = 'carousel-slide';
-            slide.innerHTML =
-                '<div class="carousel-img-wrapper">' +
-                    '<img src="' + p.imagem + '" alt="' + p.nome + '" class="carousel-img" onerror="this.style.display=\'none\'">' +
-                '</div>' +
-                '<div class="carousel-info">' +
-                    '<span class="carousel-badge">⭐ Destaque</span>' +
-                    '<h2 class="carousel-name">' + p.nome + '</h2>' +
-                    '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>' +
-                    '<a href="' + linkWhats + '" target="_blank" class="carousel-whatsapp">💬 Comprar via WhatsApp</a>' +
-                '</div>';
-            track.appendChild(slide);
 
-            // Dot
-            var dot = document.createElement('button');
-            dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-            dot.setAttribute('aria-label', 'Slide ' + (i + 1));
-            dot.dataset.index = i;
-            dotsContainer.appendChild(dot);
+            if (p.isBannerReparos) {
+                var imagemBanner = 'img/banner-reparos.png';
+                var linkWhatsReparo = 'https://wa.me/' + numeroWhatsapp + '?text=' + encodeURIComponent('Olá, gostaria de fazer um orçamento para um reparo/conserto de aparelho.');
+
+                slide.style.padding = '0';
+                slide.style.display = 'block';
+
+          slide.innerHTML =
+               '<a href="' + linkWhatsReparo + '" target="_blank">' +
+                       '<img src="img/banner-reparos.png" alt="Serviços de Reparos" class="banner-desktop">' +
+                     '<img src="img/assistencia-tecnica-galego.png" alt="Serviços de Reparos" class="banner-mobile">' +
+                '</a>';
+
+            } else {
+                var linkWhats = 'https://wa.me/' + numeroWhatsapp + '?text=' +
+                    encodeURIComponent('Olá, tenho interesse no produto: ' + p.nome + ' no valor de R$ ' + p.preco.toFixed(2));
+
+               
+                    slide.innerHTML =
+    '<div class="carousel-img-wrapper">' +
+        '<img src="' + p.imagem + '" alt="' + p.nome + '" class="carousel-img" onerror="this.style.display=\'none\'">' +
+    '</div>' +
+    '<div class="carousel-info">' +
+        '<span class="carousel-badge"><i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i> ' + p.categoria + '</span>' +
+        '<h2 class="carousel-name">' + p.nome + '</h2>' +
+        '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>' +
+        '<a href="' + linkWhats + '" target="_blank" class="carousel-whatsapp"><i class="fa-regular fa-comment-dots"></i> Comprar via WhatsApp</a>' +
+    '</div>';
+                
+            }
+
+//vendo os ícones 
+
+            if (track) track.appendChild(slide);
+
+            if (dotsContainer) {
+                var dot = document.createElement('button');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+                dot.dataset.index = i;
+                dotsContainer.appendChild(dot);
+            }
         });
 
-        // ===== Carousel Controls =====
+        // ===== Controles =====
         var currentSlide = 0;
         var totalSlides = destaques.length;
-        var autoPlayTimer;
 
         function goToSlide(index) {
             currentSlide = index;
-            track.style.transform = 'translateX(-' + (index * 100) + '%)';
-            var dots = dotsContainer.querySelectorAll('.carousel-dot');
-            for (var d = 0; d < dots.length; d++) {
-                if (d === index) {
-                    dots[d].classList.add('active');
-                } else {
-                    dots[d].classList.remove('active');
+            if (track) track.style.transform = 'translateX(-' + (index * 100) + '%)';
+            if (dotsContainer) {
+                var dots = dotsContainer.querySelectorAll('.carousel-dot');
+                for (var d = 0; d < dots.length; d++) {
+                    dots[d].classList.toggle('active', d === index);
                 }
             }
         }
 
-        function nextSlide() {
-            goToSlide((currentSlide + 1) % totalSlides);
+        var btnNext = document.getElementById('carousel-next');
+        var btnPrev = document.getElementById('carousel-prev');
+
+        if (btnNext && btnPrev) {
+            var newNext = btnNext.cloneNode(true);
+            var newPrev = btnPrev.cloneNode(true);
+            btnNext.parentNode.replaceChild(newNext, btnNext);
+            btnPrev.parentNode.replaceChild(newPrev, btnPrev);
+
+            newNext.addEventListener('click', function () {
+                goToSlide((currentSlide + 1) % totalSlides);
+            });
+            newPrev.addEventListener('click', function () {
+                goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+            });
         }
 
-        function prevSlide() {
-            goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+        if (dotsContainer) {
+            dotsContainer.addEventListener('click', function (e) {
+                var dot = e.target.closest('.carousel-dot');
+                if (!dot) return;
+                goToSlide(parseInt(dot.dataset.index));
+            });
         }
-
-        // Arrow buttons
-        document.getElementById('carousel-next').addEventListener('click', function () {
-            nextSlide();
-            restartAutoPlay();
-        });
-
-        document.getElementById('carousel-prev').addEventListener('click', function () {
-            prevSlide();
-            restartAutoPlay();
-        });
-
-        // Dots
-        dotsContainer.addEventListener('click', function (e) {
-            var dot = e.target.closest('.carousel-dot');
-            if (!dot) return;
-            goToSlide(parseInt(dot.dataset.index));
-            restartAutoPlay();
-        });
 
         // Auto-play
-        function startAutoPlay() {
-            autoPlayTimer = setInterval(nextSlide, 4000);
+        var autoPlayTimer = setInterval(function () {
+            goToSlide((currentSlide + 1) % totalSlides);
+        }, 4000);
+
+        var carousel = document.getElementById('carousel');
+        if (carousel) {
+            carousel.addEventListener('mouseenter', function () { clearInterval(autoPlayTimer); });
+            carousel.addEventListener('mouseleave', function () {
+                autoPlayTimer = setInterval(function () {
+                    goToSlide((currentSlide + 1) % totalSlides);
+                }, 4000);
+            });
         }
-
-        function stopAutoPlay() {
-            clearInterval(autoPlayTimer);
-        }
-
-        function restartAutoPlay() {
-            stopAutoPlay();
-            startAutoPlay();
-        }
-
-        // Pause on hover
-        carousel.addEventListener('mouseenter', stopAutoPlay);
-        carousel.addEventListener('mouseleave', startAutoPlay);
-
-        // Touch/swipe support
-        var touchStartX = 0;
-        var touchEndX = 0;
-
-        carousel.addEventListener('touchstart', function (e) {
-            touchStartX = e.changedTouches[0].screenX;
-            stopAutoPlay();
-        }, { passive: true });
-
-        carousel.addEventListener('touchend', function (e) {
-            touchEndX = e.changedTouches[0].screenX;
-            var diff = touchStartX - touchEndX;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) { nextSlide(); }
-                else { prevSlide(); }
-            }
-            startAutoPlay();
-        }, { passive: true });
-
-        // Start
-        startAutoPlay();
     }
 
     // ===== PRODUTOS =====
     function renderProdutos(textoBusca) {
         textoBusca = textoBusca || '';
         var container = document.getElementById('vitrine-container');
+        if (!container) return;
+
         var produtos = getProdutos();
         container.innerHTML = '';
 
@@ -161,7 +157,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
 
         if (filtrados.length === 0) {
-            container.innerHTML = '<div class="vitrine-empty"><div class="empty-icon">🔍</div><p>Nenhum produto encontrado</p></div>';
+            container.innerHTML = '<div class="vitrine-empty"><div class="empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div><p>Nenhum produto encontrado</p></div>';
             return;
         }
 
@@ -170,7 +166,9 @@ document.addEventListener('DOMContentLoaded', async function () {
             var linkWhats = 'https://wa.me/' + numeroWhatsapp + '?text=' +
                 encodeURIComponent('Olá, tenho interesse no produto: ' + p.nome + ' no valor de R$ ' + p.preco.toFixed(2));
 
-            var imgSrc = p.imagem || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjE2MCIgeT0iMTA4IiBmb250LXNpemU9IjI0IiBmaWxsPSIjY2NjIj7wn5OmPC90ZXh0Pjwvc3ZnPg==';
+            var imgContent = p.imagem
+                ? '<img src="' + p.imagem + '" alt="' + p.nome + '" class="product-img">'
+                : '<div class="product-img-placeholder"><i class="fa-solid fa-boxes-packing" style="color:rgb(126,83,45)"></i></div>';
 
             var card = document.createElement('div');
             card.className = 'product-card';
@@ -178,7 +176,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             card.innerHTML =
                 '<div class="product-img-wrapper">' +
-                    '<img src="' + imgSrc + '" alt="' + p.nome + '" class="product-img" onerror="this.src=\'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjwvc3ZnPg==\'">' +
+                    imgContent +
                     (isEsgotado ? '<span class="product-badge-esgotado">ESGOTADO</span>' : '') +
                 '</div>' +
                 '<div class="product-info">' +
@@ -186,7 +184,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     '<h3 class="product-name">' + p.nome + '</h3>' +
                     '<div class="product-price">R$ ' + p.preco.toFixed(2) + '</div>' +
                     '<a href="' + (isEsgotado ? '#' : linkWhats) + '" ' + (isEsgotado ? '' : 'target="_blank"') + ' class="btn-whatsapp ' + (isEsgotado ? 'esgotado' : '') + '">' +
-                        (isEsgotado ? '⚠️ Esgotado' : '💬 Comprar via WhatsApp') +
+                        (isEsgotado ? '<i class="fa-solid fa-triangle-exclamation" style="color: rgb(255, 212, 59);"></i> Esgotado' : '<i class="fa-solid fa-comments-dollar"></i> Comprar via WhatsApp') +
                     '</a>' +
                 '</div>';
 
@@ -196,25 +194,31 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // ===== Filtro de Categorias =====
     var categoryContainer = document.getElementById('category-container');
-    categoryContainer.addEventListener('click', function (e) {
-        var item = e.target.closest('.category-item');
-        if (!item) return;
+    if (categoryContainer) {
+        categoryContainer.addEventListener('click', function (e) {
+            var item = e.target.closest('.category-item');
+            if (!item) return;
 
-        categoriaAtual = item.dataset.categoria;
+            categoriaAtual = item.dataset.categoria;
 
-        var items = categoryContainer.querySelectorAll('.category-item');
-        for (var i = 0; i < items.length; i++) {
-            items[i].classList.remove('active');
-        }
-        item.classList.add('active');
+            var items = categoryContainer.querySelectorAll('.category-item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].classList.remove('active');
+            }
+            item.classList.add('active');
 
-        renderProdutos(document.getElementById('search').value);
-    });
+            var searchInput = document.getElementById('search');
+            renderProdutos(searchInput ? searchInput.value : '');
+        });
+    }
 
     // ===== Busca =====
-    document.getElementById('search').addEventListener('input', function (e) {
-        renderProdutos(e.target.value);
-    });
+    var searchInput = document.getElementById('search');
+    if (searchInput) {
+        searchInput.addEventListener('input', function (e) {
+            renderProdutos(e.target.value);
+        });
+    }
 
     // ===== Inicialização =====
     renderCarrossel();
