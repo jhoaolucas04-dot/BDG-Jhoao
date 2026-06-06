@@ -7,21 +7,29 @@
     <title>Login - Bodega do Galego</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script>
+        (function(){var t=localStorage.getItem('bodega_tema');if(t){document.documentElement.setAttribute('data-theme',t)}else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches){document.documentElement.setAttribute('data-theme','dark')}})();
+    </script> 
+    
+     <link rel="icon" type="image/jpeg" href="img/logo.jpeg">        
 </head>
 <body class="login-page">
 
-    <!-- Decorative Background Orbs -->
-    <div class="login-bg">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
+    <div class="login-tema-wrapper">
+        <button class="btn-tema" title="Alternar modo escuro" aria-label="Alternar modo escuro">
+            <span class="tema-icon"></span>
+        </button>
     </div>
 
-    <!-- Login Card -->
+    <div class="login-bg">
+        <div class="orb orb-1"></div>
+    </div>
+
     <div class="login-card">
-        <div class="login-logo">
-            <span class="icon">🏪</span>
-            <h1>Bodega do <span>Galego</span></h1>
+        <div class="login-header">
+            <img src="img/logo.jpeg" alt="Logo Bodega do Galego" class="login-logo-img">
+            <h1>Bodega do Galego</h1>
             <p>Painel Administrativo</p>
         </div>
 
@@ -30,7 +38,7 @@
 
             <div class="input-group">
                 <label for="username">Usuário</label>
-                <span class="input-icon">👤</span>
+                <span class="input-icon"><i class="fa-solid fa-user-tie" style="color: rgb(255, 212, 59);"></i></span>
                 <input
                     type="text"
                     id="username"
@@ -43,15 +51,20 @@
 
             <div class="input-group">
                 <label for="password">Senha</label>
-                <span class="input-icon">🔒</span>
-                <input
-                    type="password"
-                    id="password"
-                    class="login-input"
-                    placeholder="Digite sua senha"
-                    autocomplete="current-password"
-                    required
-                >
+                <span class="input-icon"><i class="fa-solid fa-lock" style="color: rgb(255, 212, 59);"></i></span>
+                <div class="password-wrapper">
+                    <input
+                        type="password"
+                        id="password"
+                        class="login-input"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        required
+                    >
+                    <button type="button" id="btn-toggle-password" class="btn-toggle-password" aria-label="Mostrar senha">
+                        <i class="fa-solid fa-eye" id="eye-icon"></i>
+                    </button>
+                </div>
             </div>
 
             <button type="submit" class="btn-login">
@@ -64,6 +77,7 @@
         </div>
     </div>
 
+    <script src="js/tema.js"></script>
     <script src="js/login.js"></script>
 </body>
 </html>
