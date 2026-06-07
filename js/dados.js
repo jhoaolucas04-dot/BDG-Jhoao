@@ -64,7 +64,11 @@ async function adicionarProduto(dados) {
             headers: { ...HEADERS, 'Prefer': 'return=representation' },
             body: JSON.stringify(novoProduto)
         });
-        if (!resp.ok) throw new Error('Erro ao adicionar produto');
+        if (!resp.ok) {
+            const errBody = await resp.text();
+            console.error('Supabase erro:', resp.status, errBody);
+            throw new Error('Erro ao adicionar produto');
+        }
         await carregarProdutos();
         return _cache;
     } catch (erro) {
@@ -167,19 +171,21 @@ function salvarProdutos(lista) {
 
 /**
  * Registra um callback que é chamado sempre que os dados mudam.
- * No Supabase, faz polling a cada 5 segundos para manter sincronizado.
+ * Faz polling a cada 10 segundos para sincronizar com outros usuários.
  * @param {Function} callback
  */
+var _pollingTimer = null;
 function registrarListenerProdutos(callback) {
-    // Chama imediatamente para renderizar
-    carregarProdutos().then(function() {
-        callback();
-    });
+    // Cancela polling anterior se existir
+    if (_pollingTimer) clearInterval(_pollingTimer);
 
-    // Polling a cada 5 segundos para sincronizar com outros usuários
-    setInterval(function() {
+    // Chama o callback imediatamente (dados já carregados)
+    callback();
+
+    // Polling a cada 10 segundos
+    _pollingTimer = setInterval(function() {
         carregarProdutos().then(function() {
             callback();
         });
-    }, 5000);
+    }, 10000);
 }
