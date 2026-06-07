@@ -10,10 +10,24 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // ===== Variáveis =====
     var categoriaAtual = 'Todos';
-    var numeroWhatsapp = '5581999999999'; // DDD Recife/PE
+    var numeroWhatsapp = '5581984696025'; // DDD Recife/
+    var autoPlayTimer = null;
 
     // ===== CARROSSEL =====
     function renderCarrossel() {
+        // Limpar intervalo anterior se houver
+        if (autoPlayTimer) {
+            clearInterval(autoPlayTimer);
+            autoPlayTimer = null;
+        }
+
+        // Clonar o carrossel para remover listeners antigos e evitar múltiplos timers correndo
+        var carousel = document.getElementById('carousel');
+        if (carousel) {
+            var newCarousel = carousel.cloneNode(true);
+            carousel.parentNode.replaceChild(newCarousel, carousel);
+        }
+
         var produtos = getProdutos();
 
         // 1. Banner de reparos sempre primeiro
@@ -42,6 +56,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             slide.className = 'carousel-slide';
 
             if (p.isBannerReparos) {
+    slide.classList.add('banner-slide');
                 var imagemBanner = 'img/banner-reparos.png';
                 var linkWhatsReparo = 'https://wa.me/' + numeroWhatsapp + '?text=' + encodeURIComponent('Olá, gostaria de fazer um orçamento para um reparo/conserto de aparelho.');
 
@@ -58,17 +73,21 @@ document.addEventListener('DOMContentLoaded', async function () {
                 var linkWhats = 'https://wa.me/' + numeroWhatsapp + '?text=' +
                     encodeURIComponent('Olá, tenho interesse no produto: ' + p.nome + ' no valor de R$ ' + p.preco.toFixed(2));
 
-                slide.innerHTML =
-                    '<div class="carousel-img-wrapper">' +
-                        '<img src="' + p.imagem + '" alt="' + p.nome + '" class="carousel-img" onerror="this.style.display=\'none\'">' +
-                    '</div>' +
-                    '<div class="carousel-info">' +
-                        '<span class="carousel-badge"><i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i> ' + p.categoria + '</span>' +
-                        '<h2 class="carousel-name">' + p.nome + '</h2>' +
-                        '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>' +
-                        '<a href="' + linkWhats + '" target="_blank" class="carousel-whatsapp">💬 Comprar via WhatsApp</a>' +
-                    '</div>';
+               
+                    slide.innerHTML =
+    '<div class="carousel-img-wrapper">' +
+        '<img src="' + p.imagem + '" alt="' + p.nome + '" class="carousel-img" onerror="this.style.display=\'none\'">' +
+    '</div>' +
+    '<div class="carousel-info">' +
+        '<span class="carousel-badge"><i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i> ' + p.categoria + '</span>' +
+        '<h2 class="carousel-name">' + p.nome + '</h2>' +
+        '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>' +
+        '<a href="' + linkWhats + '" target="_blank" class="carousel-whatsapp"><i class="fa-regular fa-comment-dots"></i> Comprar via WhatsApp</a>' +
+    '</div>';
+                
             }
+
+//vendo os ícones 
 
             if (track) track.appendChild(slide);
 
@@ -122,14 +141,17 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         // Auto-play
-        var autoPlayTimer = setInterval(function () {
+        autoPlayTimer = setInterval(function () {
             goToSlide((currentSlide + 1) % totalSlides);
         }, 4000);
 
         var carousel = document.getElementById('carousel');
         if (carousel) {
-            carousel.addEventListener('mouseenter', function () { clearInterval(autoPlayTimer); });
+            carousel.addEventListener('mouseenter', function () { 
+                if (autoPlayTimer) clearInterval(autoPlayTimer); 
+            });
             carousel.addEventListener('mouseleave', function () {
+                if (autoPlayTimer) clearInterval(autoPlayTimer);
                 autoPlayTimer = setInterval(function () {
                     goToSlide((currentSlide + 1) % totalSlides);
                 }, 4000);
@@ -180,7 +202,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     '<h3 class="product-name">' + p.nome + '</h3>' +
                     '<div class="product-price">R$ ' + p.preco.toFixed(2) + '</div>' +
                     '<a href="' + (isEsgotado ? '#' : linkWhats) + '" ' + (isEsgotado ? '' : 'target="_blank"') + ' class="btn-whatsapp ' + (isEsgotado ? 'esgotado' : '') + '">' +
-                        (isEsgotado ? '<i class="fa-solid fa-triangle-exclamation" style="color: rgb(255, 212, 59);"></i> Esgotado' : '💬 Comprar via WhatsApp') +
+                        (isEsgotado ? '<i class="fa-solid fa-triangle-exclamation" style="color: rgb(255, 212, 59);"></i> Esgotado' : '<i class="fa-solid fa-comments-dollar"></i> Comprar via WhatsApp') +
                     '</a>' +
                 '</div>';
 
@@ -217,6 +239,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     // ===== Inicialização =====
-    renderCarrossel();
-    renderProdutos();
+    registrarListenerProdutos(function () {
+        renderCarrossel();
+        var searchInput = document.getElementById('search');
+        renderProdutos(searchInput ? searchInput.value : '');
+    });
 });

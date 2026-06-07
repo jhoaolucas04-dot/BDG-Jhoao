@@ -38,7 +38,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             imgPreview.onerror = function () {
                 imgPreview.style.display = 'none';
-                previewWrapper.querySelector('.placeholder-text').textContent = '⚠️ URL inválida';
+               previewWrapper.querySelector('.placeholder-text').innerHTML =
+    '<i class="fa-solid fa-triangle-exclamation"></i> URL inválida';
                 previewWrapper.querySelector('.placeholder-text').style.display = 'block';
                 previewWrapper.classList.remove('has-image');
             };
@@ -108,19 +109,25 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
 
         tbody.querySelectorAll('.btn-toggle').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                alternarStatus(parseInt(this.dataset.id));
-                renderTabela();
-                mostrarToast('Status alterado!', 'success');
+            btn.addEventListener('click', async function () {
+                try {
+                    await alternarStatus(parseInt(this.dataset.id));
+                    mostrarToast('Status alterado!', 'success');
+                } catch (e) {
+                    mostrarToast('Erro ao alterar status!', 'danger');
+                }
             });
         });
 
         tbody.querySelectorAll('.btn-delete').forEach(function (btn) {
-            btn.addEventListener('click', function () {
+            btn.addEventListener('click', async function () {
                 if (confirm('Tem certeza que deseja excluir este produto?')) {
-                    deletarProduto(parseInt(this.dataset.id));
-                    renderTabela();
-                    mostrarToast('Produto excluído!', 'danger');
+                    try {
+                        await deletarProduto(parseInt(this.dataset.id));
+                        mostrarToast('Produto excluído!', 'danger');
+                    } catch (e) {
+                        mostrarToast('Erro ao excluir produto!', 'danger');
+                    }
                 }
             });
         });
@@ -151,20 +158,23 @@ document.addEventListener('DOMContentLoaded', async function () {
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function resetarFormulario() {
-        form.reset();
-        inputId.value = '';
-        btnCancelar.style.display = 'none';
-        document.querySelector('.box-title-form').textContent = '➕ Novo Produto';
-        document.getElementById('btn-submit').textContent = '➕ Adicionar Produto';
-        imgPreview.style.display = 'none';
-        previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
-        previewWrapper.querySelector('.placeholder-text').style.display = 'block';
-        previewWrapper.classList.remove('has-image');
-    }
+   function resetarFormulario() {
+    form.reset();
+    inputId.value = '';
+    btnCancelar.style.display = 'none';
+    
+    // Alterado para innerHTML para renderizar o ícone do Font Awesome corretamente
+    document.querySelector('.box-title-form').innerHTML = '<i class="fa-solid fa-plus"></i> Novo Produto';
+    document.getElementById('btn-submit').innerHTML = '<i class="fa-solid fa-plus"></i> Adicionar Produto';
+    
+    imgPreview.style.display = 'none';
+    previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
+    previewWrapper.querySelector('.placeholder-text').style.display = 'block';
+    previewWrapper.classList.remove('has-image');
+}
 
     // ===== Submissão do Formulário =====
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const dados = {
@@ -179,16 +189,23 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         if (editId) {
             // Modo edição
-            editarProduto(parseInt(editId), dados);
-            mostrarToast('Produto atualizado com sucesso!', 'success');
+            try {
+                await editarProduto(parseInt(editId), dados);
+                mostrarToast('Produto atualizado com sucesso!', 'success');
+                resetarFormulario();
+            } catch (e) {
+                mostrarToast('Erro ao atualizar produto!', 'danger');
+            }
         } else {
             // Modo inserção
-            adicionarProduto(dados);
-            mostrarToast('Produto adicionado com sucesso!', 'success');
+            try {
+                await adicionarProduto(dados);
+                mostrarToast('Produto adicionado com sucesso!', 'success');
+                resetarFormulario();
+            } catch (e) {
+                mostrarToast('Erro ao adicionar produto!', 'danger');
+            }
         }
-
-        resetarFormulario();
-        renderTabela();
     });
 
     // ===== Cancelar Edição =====
@@ -222,6 +239,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         }, 2500);
     }
 
-    // ===== Inicialização =====
-    renderTabela();
+    // ===== Inicialização e Sincronização em Tempo Real =====
+    registrarListenerProdutos(function () {
+        renderTabela();
+    });
 });

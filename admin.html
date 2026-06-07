@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +11,11 @@
     <link rel="stylesheet" href="css/admin.css">
     <!-- Prevenir flash de tema errado -->
     <script>
-        (function(){var t=localStorage.getItem('bodega_tema');if(t){document.documentElement.setAttribute('data-theme',t)}else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches){document.documentElement.setAttribute('data-theme','dark')}})();
+        (function () { var t = localStorage.getItem('bodega_tema'); if (t) { document.documentElement.setAttribute('data-theme', t) } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark') } })();
     </script>
-    <link rel="icon" type="imagecon" href="img/logo.jpeg">   
+    <link rel="icon" type="image/jpeg" href="img/logo.jpeg">
 </head>
+
 <body class="admin-page">
 
     <!-- Header -->
@@ -27,7 +29,8 @@
                 <span class="tema-icon"></span>
             </button>
             <a href="index.html"><i class="fa-solid fa-store" style="color: rgb(255, 212, 59);"></i> Ver Vitrine</a>
-            <a href="#" id="btn-logout" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket" style="color: rgb(255, 45, 45);"></i> Sair</a>
+            <a href="#" id="btn-logout" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"
+                    style="color: rgb(255, 45, 45);"></i> Sair</a>
         </nav>
     </header>
 
@@ -55,32 +58,13 @@
             <form id="product-form" class="product-form">
                 <input type="hidden" id="prod-id">
 
-                <input
-                    type="text"
-                    id="prod-nome"
-                    class="form-input"
-                    placeholder="Nome do Produto"
-                    required
-                >
+                <input type="text" id="prod-nome" class="form-input" placeholder="Nome do Produto" required>
 
-                <input
-                    type="number"
-                    id="prod-preco"
-                    class="form-input"
-                    step="0.01"
-                    min="0"
-                    placeholder="Preço (R$)"
-                    required
-                >
+                <input type="number" id="prod-preco" class="form-input" step="0.01" min="0" placeholder="Preço (R$)"
+                    required>
 
-                <input
-                    type="number"
-                    id="prod-estoque"
-                    class="form-input"
-                    min="0"
-                    placeholder="Quantidade em Estoque"
-                    required
-                >
+                <input type="number" id="prod-estoque" class="form-input" min="0" placeholder="Quantidade em Estoque"
+                    required>
 
                 <select id="prod-categoria" class="form-input">
                     <option value="Acessórios">Acessórios</option>
@@ -90,26 +74,24 @@
                     <option value="Reparos">Reparos e serviços</option>
                 </select>
 
-                <input
-                    type="url"
-                    id="prod-imagem"
-                    class="form-input"
-                    placeholder="URL da imagem (cole o link aqui)"
-                >
+                <input type="url" id="prod-imagem" class="form-input" placeholder="URL da imagem (cole o link aqui)">
 
                 <div id="image-preview-wrapper" class="image-preview-wrapper">
                     <img id="img-preview" src="" alt="Preview" style="display: none;">
-                    <span class="placeholder-text"><i class="fa-solid fa-camera"></i> Preview da imagem aparecerá aqui</span>
+                    <span class="placeholder-text"><i class="fa-solid fa-camera"></i> Preview da imagem aparecerá
+                        aqui</span>
                 </div>
 
-                <button type="submit" class="btn-salvar" id="btn-submit"> <i class="fa-solid fa-plus"></i> Adicionar Produto</button>
+                <button type="submit" class="btn-salvar" id="btn-submit"> <i class="fa-solid fa-plus"></i> Adicionar
+                    Produto</button>
                 <button type="button" id="btn-cancelar" class="btn-cancelar">✖ Cancelar Edição</button>
             </form>
         </div>
 
         <!-- Products Table -->
         <div class="box">
-            <h2 class="box-title"><i class="fa-solid fa-box-open" style="color: rgb(82, 69, 57);"></i> Produtos Cadastrados</h2>
+            <h2 class="box-title"><i class="fa-solid fa-box-open" style="color: rgb(82, 69, 57);"></i> Produtos
+                Cadastrados</h2>
             <div class="table-wrapper">
                 <table class="admin-table">
                     <thead>
@@ -129,9 +111,14 @@
         </div>
     </div>
 
+    <!-- Firebase SDKs (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <!-- Scripts -->
     <script src="js/dados.js"></script>
     <script src="js/tema.js"></script>
     <script src="js/admin.js"></script>
 </body>
+
 </html>

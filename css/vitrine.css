@@ -74,7 +74,7 @@
     box-shadow: 0 4px 16px var(--primary-glow);
 }
 
-/* ===== Carousel ===== */
+/* ===== Carrosel ===== */
 .carousel {
     margin: 20px 5% 12px 5%;
     border-radius: var(--radius-lg);
@@ -110,14 +110,11 @@
     z-index: 1;
 }
 
-/* Banner slide */
-.carousel-slide.banner-slide {
-    padding: 20px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 300px;
-    background: transparent;
+.carousel-slide.banner-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .carousel-slide.banner-slide a {
@@ -130,7 +127,8 @@
     z-index: 1;
 }
 
-.carousel-slide.banner-slide img {
+/* CORRIGIDO: Chaves fechadas corretamente e duplicatas removidas */
+.carousel-slide.banner-slide img.banner-spec {
     max-width: 90%;
     max-height: 260px;
     width: auto;
@@ -139,8 +137,13 @@
     display: block;
 }
 
-.banner-mobile { display: none; }
-.banner-desktop { display: block; }
+.banner-mobile {
+    display: none !important;
+}
+
+.banner-desktop {
+    display: block !important;
+}
 
 .carousel-img-wrapper {
     flex: 0 0 40%;
@@ -399,7 +402,7 @@
     color: #fff;
     font-size: 11px;
     font-weight: 700;
-    padding: 4px 10px;
+    padding: 4px 20px;
     border-radius: var(--radius-full);
     backdrop-filter: blur(4px);
 }
@@ -461,6 +464,7 @@
     text-align: center;
     background: var(--whatsapp);
     color: #fff;
+    right: 25px; /* CORRIGIDO: de 'rigth' para 'right' */
 }
 
 .btn-whatsapp:hover {
@@ -505,6 +509,7 @@
 }
 
 /* ===== Responsive ===== */
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
     .vitrine-header {
         flex-wrap: wrap;
@@ -522,18 +527,24 @@
         border-radius: var(--radius-md);
     }
 
+    /* CORRIGIDO: Remove restrições de padding e flex do slide para o banner não achatar */
     .carousel-slide.banner-slide {
         min-height: auto;
-        padding: 0;
+        padding: 0 !important;
+        display: block !important; /* Garante que o link/imagem ocupem o tamanho correto */
     }
 
-    .banner-desktop { display: none; }
+    .banner-desktop { 
+        display: none !important; 
+    }
+    
+    /* CORRIGIDO: Ajustado para mostrar a imagem inteira sem cortes */
     .banner-mobile {
-        display: block;
-        width: 100%;
-        height: auto;
-        max-height: none;
-        object-fit: cover;
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        object-fit: contain !important; /* Garante que a imagem inteira caiba na tela */
     }
 
     .carousel-slide {
@@ -594,31 +605,27 @@
     }
 }
 
-@media (max-width: 480px) {
-    .logo {
-        font-size: 18px;
-    }
+/* ===== Posicionamento da Lupa Interna ===== */
+.search-wrapper {
+    position: relative;
+    flex: 1;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+}
 
-    .logo-img {
-        height: 34px;
-    }
+.search-icon-left {
+    position: absolute;
+    left: 18px;
+    font-size: 14px;
+    color: var(--text-muted);
+    pointer-events: none;
+    z-index: 5;
+}
 
-    .admin-btn {
-        padding: 8px 14px;
-        font-size: 12px;
-    }
-
-    .carousel-slide.banner-slide {
-        min-height: auto;
-        padding: 8px 0;
-    }
-
-    .carousel-slide.banner-slide img {
-        max-height: 140px;
-    }
-
-    .vitrine {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 12px;
-    }
+/* Força o input a dar espaço interno para a lupa na esquerda */
+.search-bar {
+    width: 100%;
+    max-width: 480px;
+    padding: 11px 20px 11px 44px !important;
 }
