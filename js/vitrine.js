@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             slide.className = 'carousel-slide';
 
             if (p.isBannerReparos) {
+    slide.classList.add('banner-slide');
                 var imagemBanner = 'img/banner-reparos.png';
                 var linkWhatsReparo = 'https://wa.me/' + numeroWhatsapp + '?text=' + encodeURIComponent('Olá, gostaria de fazer um orçamento para um reparo/conserto de aparelho.');
 
