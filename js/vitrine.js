@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // ===== CARROSSEL =====
     function renderCarrossel() {
-        // Só inicializa o carrossel uma vez
         if (carrosselJaIniciado) return;
         carrosselJaIniciado = true;
 
@@ -47,8 +46,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             slide.className = 'carousel-slide';
 
             if (p.isBannerReparos) {
-    slide.classList.add('banner-slide');
-                var imagemBanner = 'img/banner-reparos.png';
+                slide.classList.add('banner-slide');
                 var linkWhatsReparo = 'https://wa.me/' + numeroWhatsapp + '?text=' + encodeURIComponent('Olá, gostaria de fazer um orçamento para um reparo/conserto de aparelho.');
                 slide.style.padding = '0';
                 slide.style.display = 'block';
@@ -83,7 +81,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
         });
 
-        // ===== Controles =====
         var currentSlide = 0;
         var totalSlides = destaques.length;
 
@@ -220,11 +217,31 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
     }
 
+    // ===== Search Expandida Mobile =====
+    var header = document.getElementById('vitrine-header');
+    var overlay = document.getElementById('search-overlay');
+
+    if (searchInput && header && overlay) {
+        searchInput.addEventListener('focus', function () {
+            if (window.innerWidth <= 768) {
+                header.classList.add('search-ativa');
+                overlay.classList.add('ativo');
+            }
+        });
+
+        searchInput.addEventListener('blur', function () {
+            header.classList.remove('search-ativa');
+            overlay.classList.remove('ativo');
+        });
+
+        overlay.addEventListener('click', function () {
+            searchInput.blur();
+        });
+    }
+
     // ===== Inicialização =====
-    // Carrossel só renderiza uma vez
     renderCarrossel();
 
-    // Produtos atualizam via polling
     registrarListenerProdutos(function () {
         var searchInput = document.getElementById('search');
         renderProdutos(searchInput ? searchInput.value : '');
