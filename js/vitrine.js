@@ -58,16 +58,20 @@ document.addEventListener('DOMContentLoaded', async function () {
             } else {
                 var linkWhats = 'https://wa.me/' + numeroWhatsapp + '?text=' +
                     encodeURIComponent('Olá, tenho interesse no produto: ' + p.nome + ' no valor de R$ ' + p.preco.toFixed(2));
-                slide.innerHTML =
-                    '<div class="carousel-img-wrapper">' +
-                        '<img src="' + p.imagem + '" alt="' + p.nome + '" class="carousel-img" onerror="this.style.display=\'none\'">' +
-                    '</div>' +
-                    '<div class="carousel-info">' +
-                        '<span class="carousel-badge"><i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i> ' + p.categoria + '</span>' +
-                        '<h2 class="carousel-name">' + p.nome + '</h2>' +
-                        '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>' +
-                        '<a href="' + linkWhats + '" target="_blank" class="carousel-whatsapp"><i class="fa-regular fa-comment-dots"></i> Comprar via WhatsApp</a>' +
-                    '</div>';
+                // NOVO: Verifica se é reparo no carrossel também
+var ehReparoCarrossel = (p.categoria || '').trim().toLowerCase() === 'reparos';
+var precoCarrosselHTML = ehReparoCarrossel ? '' : '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>';
+
+slide.innerHTML =
+    '<div class="carousel-img-wrapper">' +
+        '<img src="' + p.imagem + '" alt="' + p.nome + '" class="carousel-img" onerror="this.style.display=\'none\'">' +
+    '</div>' +
+    '<div class="carousel-info">' +
+        '<span class="carousel-badge"><i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i> ' + p.categoria + '</span>' +
+        '<h2 class="carousel-name">' + p.nome + '</h2>' +
+        precoCarrosselHTML + // <-- NOVO (Dinamico)
+        '<a href="' + linkWhats + '" target="_blank" class="carousel-whatsapp"><i class="fa-regular fa-comment-dots"></i> Comprar via WhatsApp</a>' +
+    '</div>';
             }
 
             if (track) track.appendChild(slide);
@@ -168,23 +172,26 @@ document.addEventListener('DOMContentLoaded', async function () {
                 : '<div class="product-img-placeholder"><i class="fa-solid fa-boxes-packing" style="color:rgb(126,83,45)"></i></div>';
 
             var card = document.createElement('div');
-            card.className = 'product-card';
-            card.style.animationDelay = (index * 0.06) + 's';
+card.className = 'product-card';
+card.style.animationDelay = (index * 0.06) + 's';
 
-            card.innerHTML =
-                '<div class="product-img-wrapper">' +
-                    imgContent +
-                    (isEsgotado ? '<span class="product-badge-esgotado">ESGOTADO</span>' : '') +
-                '</div>' +
-                '<div class="product-info">' +
-                    '<span class="product-category">' + p.categoria + '</span>' +
-                    '<h3 class="product-name">' + p.nome + '</h3>' +
-                    '<div class="product-price">R$ ' + p.preco.toFixed(2) + '</div>' +
-                    '<a href="' + (isEsgotado ? '#' : linkWhats) + '" ' + (isEsgotado ? '' : 'target="_blank"') + ' class="btn-whatsapp ' + (isEsgotado ? 'esgotado' : '') + '">' +
-                        (isEsgotado ? '<i class="fa-solid fa-triangle-exclamation" style="color: rgb(255, 212, 59);"></i> Esgotado' : '<i class="fa-solid fa-comments-dollar"></i> Comprar via WhatsApp') +
-                    '</a>' +
-                '</div>';
+// NOVO: Verifica se é reparo para ocultar o preço
+var ehReparo = (p.categoria || '').trim().toLowerCase() === 'reparos';
+var precoHTML = ehReparo ? '' : '<div class="product-price">R$ ' + p.preco.toFixed(2) + '</div>';
 
+card.innerHTML =
+    '<div class="product-img-wrapper">' +
+        imgContent +
+        (isEsgotado ? '<span class="product-badge-esgotado">ESGOTADO</span>' : '') +
+    '</div>' +
+    '<div class="product-info">' +
+        '<span class="product-category">' + p.categoria + '</span>' +
+        '<h3 class="product-name">' + p.nome + '</h3>' +
+        precoHTML + // <-- NOVO (Dinamico)
+        '<a href="' + (isEsgotado ? '#' : linkWhats) + '" ' + (isEsgotado ? '' : 'target="_blank"') + ' class="btn-whatsapp ' + (isEsgotado ? 'esgotado' : '') + '">' +
+            (isEsgotado ? '<i class="fa-solid fa-triangle-exclamation" style="color: rgb(255, 212, 59);"></i> Esgotado' : '<i class="fa-solid fa-comments-dollar"></i> Comprar via WhatsApp') +
+        '</a>' +
+    '</div>';
             container.appendChild(card);
         });
     }
