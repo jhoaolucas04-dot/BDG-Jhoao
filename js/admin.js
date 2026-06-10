@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     // ===== Elementos do DOM =====
     const form = document.getElementById('product-form');
     const btnCancelar = document.getElementById('btn-cancelar');
+    const btnSubmit = document.getElementById('btn-submit'); // <-- Ajustado para evitar erros de referência
     const inputId = document.getElementById('prod-id');
     const inputNome = document.getElementById('prod-nome');
     const inputPreco = document.getElementById('prod-preco');
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const selectCategoria = document.getElementById('prod-categoria');
     const inputImagem = document.getElementById('prod-imagem');
     const imgPreview = document.getElementById('img-preview');
+    const groupPreco = document.getElementById('group-preco');
     const previewWrapper = document.getElementById('image-preview-wrapper');
     const btnLogout = document.getElementById('btn-logout');
 
@@ -38,8 +40,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             imgPreview.onerror = function () {
                 imgPreview.style.display = 'none';
-               previewWrapper.querySelector('.placeholder-text').innerHTML =
-    '<i class="fa-solid fa-triangle-exclamation"></i> URL inválida';
+                previewWrapper.querySelector('.placeholder-text').innerHTML =
+                    '<i class="fa-solid fa-triangle-exclamation"></i> URL inválida';
                 previewWrapper.querySelector('.placeholder-text').style.display = 'block';
                 previewWrapper.classList.remove('has-image');
             };
@@ -119,12 +121,13 @@ document.addEventListener('DOMContentLoaded', async function () {
             });
         });
 
-        tbody.querySelectorAll('.btn-delete').forEach(function (btn) {
+       tbody.querySelectorAll('.btn-delete').forEach(function (btn) {
             btn.addEventListener('click', async function () {
                 if (confirm('Tem certeza que deseja excluir este produto?')) {
                     try {
                         await deletarProduto(parseInt(this.dataset.id));
                         mostrarToast('Produto excluído!', 'danger');
+                        renderTabela(); 
                     } catch (e) {
                         mostrarToast('Erro ao excluir produto!', 'danger');
                     }
@@ -149,52 +152,67 @@ document.addEventListener('DOMContentLoaded', async function () {
         inputImagem.value = p.imagem || '';
         inputImagem.dispatchEvent(new Event('input')); // trigger preview
 
+        // CONTROLE DO PREÇO NA EDIÇÃO: Se o produto já for Reparos, oculta o preço na hora
+        if (p.categoria === 'Reparos') {
+            if (groupPreco) groupPreco.style.display = 'none';
+            inputPreco.removeAttribute('required');
+        } else {
+            if (groupPreco) groupPreco.style.display = 'block';
+            inputPreco.setAttribute('required', 'required');
+        }
+
         btnCancelar.style.display = 'block';
         document.querySelector('.box-title-form').innerHTML = '<i class="fa-solid fa-pencil" style="color: rgb(82, 55, 29);"></i> Editando Produto';
-        document.getElementById('btn-submit').innerHTML = '<i class="fa-regular fa-floppy-disk" style="color: rgb(255, 255, 255);"></i> Salvar Alterações';
+        if (btnSubmit) btnSubmit.innerHTML = '<i class="fa-regular fa-floppy-disk" style="color: rgb(255, 255, 255);"></i> Salvar Alterações';
         inputNome.focus();
 
         // Scroll pro formulário em mobile
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-   function resetarFormulario() {
-    form.reset();
-    inputId.value = '';
-    btnCancelar.style.display = 'none';
-    
-    // Alterado para innerHTML para renderizar o ícone do Font Awesome corretamente
-    document.querySelector('.box-title-form').innerHTML = '<i class="fa-solid fa-plus"></i> Novo Produto';
-    document.getElementById('btn-submit').innerHTML = '<i class="fa-solid fa-plus"></i> Adicionar Produto';
-    
-    imgPreview.style.display = 'none';
-    previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
-    previewWrapper.querySelector('.placeholder-text').style.display = 'block';
-    previewWrapper.classList.remove('has-image');
-}
+    // ===== MONITORAR MUDANÇA DE CATEGORIA EM TEMPO REAL =====
+    selectCategoria.addEventListener('change', function () {
+        if (this.value === 'Reparos') {
+            if (groupPreco) groupPreco.style.display = 'none';
+            inputPreco.removeAttribute('required');
+            inputPreco.value = ''; // Limpa o que foi digitado
+        } else {
+            if (groupPreco) groupPreco.style.display = 'block';
+            inputPreco.setAttribute('required', 'required');
+        }
+    });
 
     // ===== Submissão do Formulário =====
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
+        // Tratamento do preço para a categoria Reparos
+        var ehReparo = selectCategoria.value === 'Reparos';
+        var precoFinal = ehReparo ? 0 : (parseFloat(inputPreco.value) || 0);
+
         const dados = {
             nome: inputNome.value.trim(),
-            preco: inputPreco.value,
-            estoque: inputEstoque.value,
+            preco: precoFinal,
+            estoque: parseInt(inputEstoque.value) || 0,
             categoria: selectCategoria.value,
-            imagem: inputImagem.value.trim()
+            imagem: inputImagem.value.trim(),
+            status: 'Disponível'
         };
 
         const editId = inputId.value;
+        if (btnSubmit) btnSubmit.disabled = true;
 
-        if (editId) {
+       if (editId) {
             // Modo edição
             try {
                 await editarProduto(parseInt(editId), dados);
                 mostrarToast('Produto atualizado com sucesso!', 'success');
                 resetarFormulario();
+                renderTabela(); 
             } catch (e) {
                 mostrarToast('Erro ao atualizar produto!', 'danger');
+            } finally {
+                if (btnSubmit) btnSubmit.disabled = false;
             }
         } else {
             // Modo inserção
@@ -202,8 +220,11 @@ document.addEventListener('DOMContentLoaded', async function () {
                 await adicionarProduto(dados);
                 mostrarToast('Produto adicionado com sucesso!', 'success');
                 resetarFormulario();
+                renderTabela(); 
             } catch (e) {
                 mostrarToast('Erro ao adicionar produto!', 'danger');
+            } finally {
+                if (btnSubmit) btnSubmit.disabled = false;
             }
         }
     });
@@ -220,9 +241,27 @@ document.addEventListener('DOMContentLoaded', async function () {
         window.location.href = 'login.html';
     });
 
+    // ===== ÚNICA FUNÇÃO DE RESETAR FORMULÁRIO (CORRIGIDA) =====
+    function resetarFormulario() {
+        form.reset();
+        inputId.value = '';
+        btnCancelar.style.display = 'none';
+        
+        document.querySelector('.box-title-form').innerHTML = '<i class="fa-solid fa-plus"></i> Novo Produto';
+        if (btnSubmit) btnSubmit.innerHTML = '<i class="fa-solid fa-plus"></i> Adicionar Produto';
+        
+        imgPreview.style.display = 'none';
+        previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
+        previewWrapper.querySelector('.placeholder-text').style.display = 'block';
+        previewWrapper.classList.remove('has-image');
+
+        // Garante que o campo de preço reaparece e volta a ser obrigatório para as outras categorias
+        if (groupPreco) groupPreco.style.display = 'block';
+        inputPreco.setAttribute('required', 'required');
+    }
+
     // ===== Toast Notification =====
     function mostrarToast(mensagem, tipo) {
-        // Remover toast anterior se existir
         const existente = document.querySelector('.toast');
         if (existente) existente.remove();
 
