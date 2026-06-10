@@ -626,6 +626,16 @@
     .product-price { font-size: 17px; }
 }
 
+@media (max-width: 768px) {
+    /* Ajuste fino para a etiqueta ficar ainda mais delicada no celular */
+    .badge-estoque {
+        top: 8px;
+        left: 8px;
+        padding: 4px 8px;
+        font-size: 10px;
+    }
+    
+}
 @media (max-width: 480px) {
     .logo { font-size: 18px; }
     .logo-img { height: 34px; }
@@ -634,4 +644,42 @@
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 12px;
     }
+}
+
+/* ===== Badges de Status de Estoque ===== */
+.produto-card {
+    position: relative; /* Permite posicionar a etiqueta no topo do card */
+}
+
+.badge-estoque {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    z-index: 5;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Cor Amarelada/Laranja para urgência */
+.badge-escassez {
+    background-color: #f59e0b;
+    color: #ffffff;
+}
+
+/* Cor Vermelha para esgotado */
+.badge-esgotado {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+
+/* Opacifica o card ligeiramente se o produto acabar */
+.card-esgotado img {
+    filter: grayscale(80%);
+    opacity: 0.6;
 }
