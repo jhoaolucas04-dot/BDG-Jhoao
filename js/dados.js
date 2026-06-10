@@ -182,10 +182,10 @@ function registrarListenerProdutos(callback) {
     // Chama o callback imediatamente (dados já carregados)
     callback();
 
-    // Polling a cada *10 minutos
+    // Polling a cada *10 segundos
     _pollingTimer = setInterval(function() {
         carregarProdutos().then(function() {
             callback();
         });
-    }, 600000);
+    }, 10000);
 }
