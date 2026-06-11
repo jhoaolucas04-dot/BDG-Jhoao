@@ -98,7 +98,7 @@ async function editarProduto(id, dados) {
     }
 
     // Remove campos undefined
-    Object.keys(atualizacao).forEach(k => atualizacao[k] === undefined && delete updated[k]);
+    Object.keys(atualizacao).forEach(k => atualizacao[k] === undefined && delete atualizacao[k]); // <--- CORREÇÃO: Variável corrigida de "updated" para "atualizacao"
 
     try {
         const resp = await fetch(API + '?id=eq.' + id, {

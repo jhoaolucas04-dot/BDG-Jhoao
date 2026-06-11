@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     // ===== Elementos do DOM =====
     const form = document.getElementById('product-form');
     const btnCancelar = document.getElementById('btn-cancelar');
-    const btnSubmit = document.getElementById('btn-submit'); // <-- Ajustado para evitar erros de referência
+    const btnSubmit = document.getElementById('btn-submit'); 
     const inputId = document.getElementById('prod-id');
     const inputNome = document.getElementById('prod-nome');
     const inputPreco = document.getElementById('prod-preco');
@@ -177,6 +177,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 try {
                     await alternarStatus(parseInt(this.dataset.id));
                     mostrarToast('Status alterado!', 'success');
+                    renderTabela();
                 } catch (e) {
                     mostrarToast('Erro ao alterar status!', 'danger');
                 }
@@ -218,12 +219,10 @@ document.addEventListener('DOMContentLoaded', async function () {
             previewWrapper.classList.add('has-image');
 
             if (p.imagem.startsWith('data:image/')) {
-                // Imagem salva como base64 (arquivo)
                 setImagemMetodo('file');
                 inputImagem.value = '';
                 fileNameDisplay.textContent = 'Imagem salva no banco (arquivo)';
             } else {
-                // Imagem salva como link URL
                 setImagemMetodo('url');
                 inputImagem.value = p.imagem;
                 fileNameDisplay.textContent = 'Nenhum arquivo selecionado';
@@ -239,7 +238,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             fileNameDisplay.textContent = 'Nenhum arquivo selecionado';
         }
 
-        // CONTROLE DO PREÇO NA EDIÇÃO: Se o produto já for Reparos, oculta o preço na hora
         if (p.categoria === 'Reparos') {
             if (groupPreco) groupPreco.style.display = 'none';
             inputPreco.removeAttribute('required');
@@ -253,7 +251,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (btnSubmit) btnSubmit.innerHTML = '<i class="fa-regular fa-floppy-disk" style="color: rgb(255, 255, 255);"></i> Salvar Alterações';
         inputNome.focus();
 
-        // Scroll pro formulário em mobile
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -262,7 +259,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (this.value === 'Reparos') {
             if (groupPreco) groupPreco.style.display = 'none';
             inputPreco.removeAttribute('required');
-            inputPreco.value = ''; // Limpa o que foi digitado
+            inputPreco.value = ''; 
         } else {
             if (groupPreco) groupPreco.style.display = 'block';
             inputPreco.setAttribute('required', 'required');
@@ -273,7 +270,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        // Tratamento do preço para a categoria Reparos
         var ehReparo = selectCategoria.value === 'Reparos';
         var precoFinal = ehReparo ? 0 : (parseFloat(inputPreco.value) || 0);
 
@@ -290,10 +286,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (btnSubmit) btnSubmit.disabled = true;
 
         if (editId) {
-            // Modo edição
             try {
                 await editarProduto(parseInt(editId), dados);
-                mostrarToast('Produto atualizado com sucesso!', 'success');
+                mostrarToast('Produto updated com sucesso!', 'success');
                 resetarFormulario();
                 renderTabela();
             } catch (e) {
@@ -302,7 +297,6 @@ document.addEventListener('DOMContentLoaded', async function () {
                 if (btnSubmit) btnSubmit.disabled = false;
             }
         } else {
-            // Modo inserção
             try {
                 await adicionarProduto(dados);
                 mostrarToast('Produto adicionado com sucesso!', 'success');
@@ -328,7 +322,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         window.location.href = 'login.html';
     });
 
-    // ===== ÚNICA FUNÇÃO DE RESETAR FORMULÁRIO (CORRIGIDA) =====
+    // ===== RESETAR FORMULÁRIO =====
     function resetarFormulario() {
         form.reset();
         inputId.value = '';
@@ -343,11 +337,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         previewWrapper.querySelector('.placeholder-text').style.display = 'block';
         previewWrapper.classList.remove('has-image');
 
-        // Resetar abas de imagem
         setImagemMetodo('url');
         fileNameDisplay.textContent = 'Nenhum arquivo selecionado';
 
-        // Garante que o campo de preço reaparece e volta a ser obrigatório para as outras categorias
         if (groupPreco) groupPreco.style.display = 'block';
         inputPreco.setAttribute('required', 'required');
     }
