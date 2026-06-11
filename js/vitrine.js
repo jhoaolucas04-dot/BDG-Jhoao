@@ -1,6 +1,9 @@
 /**
  * vitrine.js — Lógica da Vitrine (página do usuário)
  * Depende de: dados.js (carregado antes no HTML)
+ * 
+ * ALTERAÇÃO: Agora recebe atualizações apenas quando o admin faz mudanças,
+ * sem polling de 2 minutos.
  */
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -249,8 +252,10 @@ card.innerHTML =
     // ===== Inicialização =====
     renderCarrossel();
 
+    // ===== ALTERAÇÃO: Listener agora só é chamado quando há mudanças =====
     registrarListenerProdutos(function () {
         var searchInput = document.getElementById('search');
         renderProdutos(searchInput ? searchInput.value : '');
+        renderCarrossel(); // Re-renderiza o carrossel também
     });
 });
