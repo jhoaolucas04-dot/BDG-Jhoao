@@ -8,7 +8,7 @@
 
 document.addEventListener('DOMContentLoaded', async function () {
 
-    // ===== Carregar dados (primeira vez busca do JSON) =====
+    // ===== Carregar dados do Supabase =====
     await carregarProdutos();
 
     // ===== Variáveis =====
