@@ -1,6 +1,9 @@
 /**
  * vitrine.js — Lógica da Vitrine (página do usuário)
  * Depende de: dados.js (carregado antes no HTML)
+ * 
+ * ALTERAÇÃO: Agora recebe atualizações apenas quando o admin faz mudanças,
+ * sem polling de 2 minutos.
  */
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -249,34 +252,10 @@ card.innerHTML =
     // ===== Inicialização =====
     renderCarrossel();
 
+    // ===== ALTERAÇÃO: Listener agora só é chamado quando há mudanças =====
     registrarListenerProdutos(function () {
         var searchInput = document.getElementById('search');
         renderProdutos(searchInput ? searchInput.value : '');
+        renderCarrossel(); // Re-renderiza o carrossel também
     });
 });
-
-// --- COLOQUE ISSO DENTRO DO LOOP DE RENDERIZAÇÃO DOS PRODUTOS ---
-
-// Pega o estoque atualizado do Firebase (convertendo para número por segurança)
-const estoque = Number(doc.data().estoque || 0); 
-
-let badgeHTML = '';
-let classeEsgotado = '';
-
-if (estoque === 0) {
-    badgeHTML = `<span class="badge-estoque badge-esgotado">Esgotado</span>`;
-    classeEsgotado = 'card-esgotado';
-} else if (estoque > 0 && estoque <= 5) {
-    badgeHTML = `<span class="badge-estoque badge-escassez">Poucas Unidades!</span>`;
-}
-
-// --- AGORA AJUSTE O SEU TEMPLATE STRIG DO CARD ---
-// Adicione a ${badgeHTML} logo no início e a ${classeEsgotado} na div principal do card:
-
-let cardHTML = `
-    <div class="produto-card ${classeEsgotado}">
-        ${badgeHTML}
-        <img src="${doc.data().imagem}" alt="${doc.data().nome}">
-        <h3>${doc.data().nome}</h3>
-        </div>
-`;

@@ -98,7 +98,7 @@ async function editarProduto(id, dados) {
     }
 
     // Remove campos undefined
-    Object.keys(atualizacao).forEach(k => atualizacao[k] === undefined && delete atualizacao[k]);
+    Object.keys(atualizacao).forEach(k => atualizacao[k] === undefined && delete updated[k]);
 
     try {
         const resp = await fetch(API + '?id=eq.' + id, {
@@ -171,7 +171,7 @@ function salvarProdutos(lista) {
 
 /**
  * Registra um callback que é chamado sempre que os dados mudam.
- * Faz polling a cada 10 segundos para sincronizar com outros usuários.
+ * Faz polling a cada 2 minutos para sincronizar com outros usuários.
  * @param {Function} callback
  */
 var _pollingTimer = null;
@@ -182,10 +182,10 @@ function registrarListenerProdutos(callback) {
     // Chama o callback imediatamente (dados já carregados)
     callback();
 
-    // Polling a cada *10 segundos
+    // Polling alterado para rodar a cada 2 minutos (120000 milissegundos)
     _pollingTimer = setInterval(function() {
         carregarProdutos().then(function() {
             callback();
         });
-    }, 10000);
+    }, 120000); 
 }
