@@ -115,7 +115,3 @@ Abra o terminal na pasta raiz do projeto e execute o comando abaixo:
     ```
 Após iniciar o servidor, abra o navegador e acesse: [http://localhost:8000](http://localhost:8000)
 
-### 🔑 Credenciais do Painel Admin
-Para acessar as ferramentas administrativas em `login.html`, utilize os seguintes dados de login padrão do estabelecimento:
-*   **Usuário:** `admin`
-*   **Senha:** `admin123`
