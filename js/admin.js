@@ -1,8 +1,6 @@
 /**
  * admin.js — Lógica do Dashboard Admin
  * Depende de: dados.js (carregado antes no HTML)
- * 
- * ALTERAÇÃO: Agora chama notificarMudanca() após operações para atualizar a vitrine
  */
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -377,4 +375,3 @@ document.addEventListener('DOMContentLoaded', async function () {
         renderTabela();
     });
 });
-
