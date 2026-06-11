@@ -48,7 +48,7 @@ A Bodega do Galego também presta serviços de assistência técnica. Para essa 
 O sistema calcula o status e reage visualmente de acordo com a quantidade (`estoque`) de cada produto:
 *   **Esgotado (Estoque = 0):** A etiqueta é alterada para "Esgotado" (cor vermelha), o card do produto recebe um filtro de escala de cinza de 80% (`filter: grayscale(80%)`) com opacidade reduzida, e o botão do WhatsApp é alterado para "Esgotado" e desativado.
 *   **Poucas Unidades (Estoque entre 1 e 5):** Exibe uma etiqueta chamativa de escassez "Poucas Unidades!" (cor amarela/laranja) na vitrine, instigando o gatilho mental de urgência no consumidor.
-*   **Disponível (Estoque > 5):** Exibe a etiqueta comum de produto em estoque ativo. No Admin, é possível alternar manualmente o status de um produto de "Disponível" para "Esgotado" pressionando o botão **Status**. Se o produto estava esgotado e for ativado, o sistema define uma quantidade padrão de 10 unidades.
+*   **Disponível (Estoque > 5):** Exibe a etiqueta comum de produto em estoque active. No Admin, é possível alternar manualmente o status de um produto de "Disponível" para "Esgotado" pressionando o botão **Status**. Se o produto estava esgotado e for ativado, o sistema define uma quantidade padrão de 10 unidades.
 
 ### 3. Persistência de Imagem via Banco de Dados
 A imagem do produto precisa obrigatoriamente ir para o banco de dados.
