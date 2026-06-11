@@ -1,48 +1,41 @@
 /**
  * vitrine.js — Lógica da Vitrine (página do usuário)
  * Depende de: dados.js (carregado antes no HTML)
+ * 
+ * ALTERAÇÃO: Agora recebe atualizações apenas quando o admin faz mudanças,
+ * sem polling de 2 minutos.
  */
 
 document.addEventListener('DOMContentLoaded', async function () {
 
-    // ===== Carregar dados (primeira vez busca do JSON) =====
+    // ===== Carregar dados do Supabase =====
     await carregarProdutos();
 
     // ===== Variáveis =====
     var categoriaAtual = 'Todos';
-    var numeroWhatsapp = '5581984696025'; // DDD Recife/
+    var numeroWhatsapp = '5581984696025';
     var autoPlayTimer = null;
+    var carrosselJaIniciado = false;
 
     // ===== CARROSSEL =====
     function renderCarrossel() {
-        // Limpar intervalo anterior se houver
+        if (carrosselJaIniciado) return;
+        carrosselJaIniciado = true;
+
         if (autoPlayTimer) {
             clearInterval(autoPlayTimer);
             autoPlayTimer = null;
         }
 
-        // Clonar o carrossel para remover listeners antigos e evitar múltiplos timers correndo
-        var carousel = document.getElementById('carousel');
-        if (carousel) {
-            var newCarousel = carousel.cloneNode(true);
-            carousel.parentNode.replaceChild(newCarousel, carousel);
-        }
-
         var produtos = getProdutos();
 
-        // 1. Banner de reparos sempre primeiro
-        var destaques = [{
-            isBannerReparos: true,
-            categoria: 'Reparos'
-        }];
+        var destaques = [{ isBannerReparos: true, categoria: 'Reparos' }];
 
-        // 2. Filtra produtos disponíveis que não sejam da categoria Reparos
         var outrosProdutos = produtos.filter(function (p) {
             var ehReparos = (p.categoria || '').trim().toLowerCase() === 'reparos';
             return p.status === 'Disponível' && !ehReparos && p.imagem;
         });
 
-        // 3. Junta e limita a 5 itens
         destaques = destaques.concat(outrosProdutos).slice(0, 5);
 
         var track = document.getElementById('carousel-track');
@@ -56,37 +49,33 @@ document.addEventListener('DOMContentLoaded', async function () {
             slide.className = 'carousel-slide';
 
             if (p.isBannerReparos) {
-                var imagemBanner = 'img/banner-reparos.png';
+                slide.classList.add('banner-slide');
                 var linkWhatsReparo = 'https://wa.me/' + numeroWhatsapp + '?text=' + encodeURIComponent('Olá, gostaria de fazer um orçamento para um reparo/conserto de aparelho.');
-
                 slide.style.padding = '0';
                 slide.style.display = 'block';
-
-          slide.innerHTML =
-               '<a href="' + linkWhatsReparo + '" target="_blank">' +
-                       '<img src="img/banner-reparos.png" alt="Serviços de Reparos" class="banner-desktop">' +
-                     '<img src="img/assistencia-tecnica-galego.png" alt="Serviços de Reparos" class="banner-mobile">' +
-                '</a>';
-
+                slide.innerHTML =
+                    '<a href="' + linkWhatsReparo + '" target="_blank">' +
+                        '<img src="img/banner-reparos.png" alt="Serviços de Reparos" class="banner-desktop">' +
+                        '<img src="img/assistencia-tecnica-galego.png" alt="Serviços de Reparos" class="banner-mobile">' +
+                    '</a>';
             } else {
                 var linkWhats = 'https://wa.me/' + numeroWhatsapp + '?text=' +
                     encodeURIComponent('Olá, tenho interesse no produto: ' + p.nome + ' no valor de R$ ' + p.preco.toFixed(2));
+                // NOVO: Verifica se é reparo no carrossel também
+var ehReparoCarrossel = (p.categoria || '').trim().toLowerCase() === 'reparos';
+var precoCarrosselHTML = ehReparoCarrossel ? '' : '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>';
 
-               
-                    slide.innerHTML =
+slide.innerHTML =
     '<div class="carousel-img-wrapper">' +
         '<img src="' + p.imagem + '" alt="' + p.nome + '" class="carousel-img" onerror="this.style.display=\'none\'">' +
     '</div>' +
     '<div class="carousel-info">' +
         '<span class="carousel-badge"><i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i> ' + p.categoria + '</span>' +
         '<h2 class="carousel-name">' + p.nome + '</h2>' +
-        '<div class="carousel-price">R$ ' + p.preco.toFixed(2) + '</div>' +
+        precoCarrosselHTML + // <-- NOVO (Dinamico)
         '<a href="' + linkWhats + '" target="_blank" class="carousel-whatsapp"><i class="fa-regular fa-comment-dots"></i> Comprar via WhatsApp</a>' +
     '</div>';
-                
             }
-
-//vendo os ícones 
 
             if (track) track.appendChild(slide);
 
@@ -99,7 +88,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
         });
 
-        // ===== Controles =====
         var currentSlide = 0;
         var totalSlides = destaques.length;
 
@@ -139,15 +127,14 @@ document.addEventListener('DOMContentLoaded', async function () {
             });
         }
 
-        // Auto-play
         autoPlayTimer = setInterval(function () {
             goToSlide((currentSlide + 1) % totalSlides);
         }, 4000);
 
         var carousel = document.getElementById('carousel');
         if (carousel) {
-            carousel.addEventListener('mouseenter', function () { 
-                if (autoPlayTimer) clearInterval(autoPlayTimer); 
+            carousel.addEventListener('mouseenter', function () {
+                if (autoPlayTimer) clearInterval(autoPlayTimer);
             });
             carousel.addEventListener('mouseleave', function () {
                 if (autoPlayTimer) clearInterval(autoPlayTimer);
@@ -188,23 +175,26 @@ document.addEventListener('DOMContentLoaded', async function () {
                 : '<div class="product-img-placeholder"><i class="fa-solid fa-boxes-packing" style="color:rgb(126,83,45)"></i></div>';
 
             var card = document.createElement('div');
-            card.className = 'product-card';
-            card.style.animationDelay = (index * 0.06) + 's';
+card.className = 'product-card';
+card.style.animationDelay = (index * 0.06) + 's';
 
-            card.innerHTML =
-                '<div class="product-img-wrapper">' +
-                    imgContent +
-                    (isEsgotado ? '<span class="product-badge-esgotado">ESGOTADO</span>' : '') +
-                '</div>' +
-                '<div class="product-info">' +
-                    '<span class="product-category">' + p.categoria + '</span>' +
-                    '<h3 class="product-name">' + p.nome + '</h3>' +
-                    '<div class="product-price">R$ ' + p.preco.toFixed(2) + '</div>' +
-                    '<a href="' + (isEsgotado ? '#' : linkWhats) + '" ' + (isEsgotado ? '' : 'target="_blank"') + ' class="btn-whatsapp ' + (isEsgotado ? 'esgotado' : '') + '">' +
-                        (isEsgotado ? '<i class="fa-solid fa-triangle-exclamation" style="color: rgb(255, 212, 59);"></i> Esgotado' : '<i class="fa-solid fa-comments-dollar"></i> Comprar via WhatsApp') +
-                    '</a>' +
-                '</div>';
+// NOVO: Verifica se é reparo para ocultar o preço
+var ehReparo = (p.categoria || '').trim().toLowerCase() === 'reparos';
+var precoHTML = ehReparo ? '' : '<div class="product-price">R$ ' + p.preco.toFixed(2) + '</div>';
 
+card.innerHTML =
+    '<div class="product-img-wrapper">' +
+        imgContent +
+        (isEsgotado ? '<span class="product-badge-esgotado">ESGOTADO</span>' : '') +
+    '</div>' +
+    '<div class="product-info">' +
+        '<span class="product-category">' + p.categoria + '</span>' +
+        '<h3 class="product-name">' + p.nome + '</h3>' +
+        precoHTML + // <-- NOVO (Dinamico)
+        '<a href="' + (isEsgotado ? '#' : linkWhats) + '" ' + (isEsgotado ? '' : 'target="_blank"') + ' class="btn-whatsapp ' + (isEsgotado ? 'esgotado' : '') + '">' +
+            (isEsgotado ? '<i class="fa-solid fa-triangle-exclamation" style="color: rgb(255, 212, 59);"></i> Esgotado' : '<i class="fa-solid fa-comments-dollar"></i> Comprar via WhatsApp') +
+        '</a>' +
+    '</div>';
             container.appendChild(card);
         });
     }
@@ -237,10 +227,35 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
     }
 
+    // ===== Search Expandida Mobile =====
+    var header = document.getElementById('vitrine-header');
+    var overlay = document.getElementById('search-overlay');
+
+    if (searchInput && header && overlay) {
+        searchInput.addEventListener('focus', function () {
+            if (window.innerWidth <= 768) {
+                header.classList.add('search-ativa');
+                overlay.classList.add('ativo');
+            }
+        });
+
+        searchInput.addEventListener('blur', function () {
+            header.classList.remove('search-ativa');
+            overlay.classList.remove('ativo');
+        });
+
+        overlay.addEventListener('click', function () {
+            searchInput.blur();
+        });
+    }
+
     // ===== Inicialização =====
+    renderCarrossel();
+
+    // ===== ALTERAÇÃO: Listener agora só é chamado quando há mudanças =====
     registrarListenerProdutos(function () {
-        renderCarrossel();
         var searchInput = document.getElementById('search');
         renderProdutos(searchInput ? searchInput.value : '');
+        renderCarrossel(); // Re-renderiza o carrossel também
     });
 });

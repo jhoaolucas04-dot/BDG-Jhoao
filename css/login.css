@@ -69,12 +69,15 @@ body.login-page {
 }
 
 .login-logo-img {
-    width: 72px;
-    height: 72px;
+    width: 92px;
+    height: 92px;
     border-radius: var(--radius-md);
     object-fit: contain;
     margin-bottom: 16px;
     box-shadow: var(--shadow-md);
+    position: relative;
+    left: 120px;
+
 }
 
 .login-header h1 {

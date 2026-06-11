@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Bodega do Galego - Os melhores acessórios de tecnologia com preço justo. Compre pelo WhatsApp!">
+    <meta name="description" content="Bodega do Galego - Os melhores acessórios de tecnologia com preço justo. Compre pelo WhatsApp!">
     <title>Bodega do Galego - Vitrine Virtual</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/vitrine.css">
@@ -19,34 +18,30 @@
 
 <body>
 
-    <header class="vitrine-header">
+    <!-- Overlay da busca mobile -->
+    <div class="search-overlay" id="search-overlay"></div>
+
+    <header class="vitrine-header" id="vitrine-header">
         <div class="logo">
             <img src="img/logo.jpeg" alt="Bodega do Galego" class="logo-img">
             Bodega do <span>Galego</span>
         </div>
-        
+
         <div class="search-wrapper">
             <i class="fa-solid fa-magnifying-glass search-icon-left"></i>
-            <input
-                type="text"
-                id="search"
-                class="search-bar"
-                placeholder="Buscar produtos..."
-            >
+            <input type="text" id="search" class="search-bar" placeholder="Buscar produtos...">
         </div>
 
         <div class="header-actions">
             <button class="btn-tema" title="Alternar modo escuro" aria-label="Alternar modo escuro">
                 <span class="tema-icon"></span>
             </button>
-            <a href="login.html" class="admin-btn"><i class="fa-solid fa-user-tie"
-                    style="color: rgb(255, 255, 255);"></i> Administração</a>
+            <a href="login.html" class="admin-btn"><i class="fa-solid fa-user-tie" style="color: rgb(255, 255, 255);"></i> Administração</a>
         </div>
     </header>
 
     <section class="carousel" id="carousel">
-        <div class="carousel-track" id="carousel-track">
-            </div>
+        <div class="carousel-track" id="carousel-track"></div>
         <button class="carousel-btn carousel-prev" id="carousel-prev" aria-label="Slide anterior">❮</button>
         <button class="carousel-btn carousel-next" id="carousel-next" aria-label="Próximo slide">❯</button>
         <div class="carousel-dots" id="carousel-dots"></div>
@@ -60,21 +55,16 @@
             <div class="category-item" data-categoria="Acessórios">Acessórios</div>
             <div class="category-item" data-categoria="Cabos">Cabos</div>
             <div class="category-item" data-categoria="Fones">Fones</div>
-            <div class="category-item" data-categoria="TV e Áudio">Áudio</div>
-
+            <div class="category-item" data-categoria="Áudio">Áudio</div>
         </div>
     </section>
 
-    <main class="vitrine" id="vitrine-container">
-    </main>
+    <main class="vitrine" id="vitrine-container"></main>
 
     <footer class="vitrine-footer">
         <p>© 2025 Bodega do Galego — Todos os direitos reservados</p>
+        <p><i class="fa-solid fa-location-dot"></i> Av. Prof. Andrade Bezerra, 795 loja D - Salgadinho, Olinda</p>
     </footer>
-
-    <!-- Firebase SDKs (Compat) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script src="js/dados.js"></script>
     <script src="js/tema.js"></script>

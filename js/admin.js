@@ -11,12 +11,13 @@ document.addEventListener('DOMContentLoaded', async function () {
         return;
     }
 
-    // ===== Carregar dados (primeira vez busca do JSON) =====
+    // ===== Carregar dados do Supabase =====
     await carregarProdutos();
 
     // ===== Elementos do DOM =====
     const form = document.getElementById('product-form');
     const btnCancelar = document.getElementById('btn-cancelar');
+    const btnSubmit = document.getElementById('btn-submit'); 
     const inputId = document.getElementById('prod-id');
     const inputNome = document.getElementById('prod-nome');
     const inputPreco = document.getElementById('prod-preco');
@@ -24,10 +25,44 @@ document.addEventListener('DOMContentLoaded', async function () {
     const selectCategoria = document.getElementById('prod-categoria');
     const inputImagem = document.getElementById('prod-imagem');
     const imgPreview = document.getElementById('img-preview');
+    const groupPreco = document.getElementById('group-preco');
     const previewWrapper = document.getElementById('image-preview-wrapper');
     const btnLogout = document.getElementById('btn-logout');
 
-    // ===== Preview de Imagem =====
+    // Elementos adicionais para controle de imagem (Abas e Upload)
+    const btnMethodUrl = document.getElementById('method-url');
+    const btnMethodFile = document.getElementById('method-file');
+    const groupImageUrl = document.getElementById('group-image-url');
+    const groupImageFile = document.getElementById('group-image-file');
+    const inputImagemFile = document.getElementById('prod-imagem-file');
+    const fileNameDisplay = document.getElementById('file-name-display');
+
+    let imagemAtualMetodo = 'url'; // 'url' ou 'file'
+
+    function setImagemMetodo(metodo) {
+        imagemAtualMetodo = metodo;
+        if (metodo === 'url') {
+            btnMethodUrl.classList.add('active');
+            btnMethodFile.classList.remove('active');
+            groupImageUrl.style.display = 'block';
+            groupImageFile.style.display = 'none';
+        } else {
+            btnMethodUrl.classList.remove('active');
+            btnMethodFile.classList.add('active');
+            groupImageUrl.style.display = 'none';
+            groupImageFile.style.display = 'block';
+        }
+    }
+
+    btnMethodUrl.addEventListener('click', function () {
+        setImagemMetodo('url');
+    });
+
+    btnMethodFile.addEventListener('click', function () {
+        setImagemMetodo('file');
+    });
+
+    // ===== Preview de Imagem (URL) =====
     inputImagem.addEventListener('input', function () {
         const url = this.value.trim();
         if (url) {
@@ -38,8 +73,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             imgPreview.onerror = function () {
                 imgPreview.style.display = 'none';
-               previewWrapper.querySelector('.placeholder-text').innerHTML =
-    '<i class="fa-solid fa-triangle-exclamation"></i> URL inválida';
+                previewWrapper.querySelector('.placeholder-text').innerHTML =
+                    '<i class="fa-solid fa-triangle-exclamation"></i> URL inválida';
                 previewWrapper.querySelector('.placeholder-text').style.display = 'block';
                 previewWrapper.classList.remove('has-image');
             };
@@ -48,6 +83,35 @@ document.addEventListener('DOMContentLoaded', async function () {
             previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
             previewWrapper.querySelector('.placeholder-text').style.display = 'block';
             previewWrapper.classList.remove('has-image');
+        }
+    });
+
+    // ===== Leitura e Preview de Imagem (Upload de Arquivo) =====
+    inputImagemFile.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            fileNameDisplay.textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const base64 = e.target.result;
+                imgPreview.src = base64;
+                imgPreview.style.display = 'block';
+                previewWrapper.querySelector('.placeholder-text').style.display = 'none';
+                previewWrapper.classList.add('has-image');
+            };
+            reader.onerror = function () {
+                mostrarToast('Erro ao ler arquivo de imagem!', 'danger');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            fileNameDisplay.textContent = 'Nenhum arquivo selecionado';
+            if (!inputId.value) {
+                imgPreview.style.display = 'none';
+                imgPreview.src = '';
+                previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
+                previewWrapper.querySelector('.placeholder-text').style.display = 'block';
+                previewWrapper.classList.remove('has-image');
+            }
         }
     });
 
@@ -91,11 +155,11 @@ document.addEventListener('DOMContentLoaded', async function () {
                 '<td><div class="prod-name">' + p.nome + '</div><div class="prod-cat">' + p.categoria + '</div></td>' +
                 '<td>R$ ' + p.preco.toFixed(2) + '</td>' +
                 '<td>' + p.estoque + ' un</td>' +
-                '<td><span class="badge ' + (p.status === 'Disponível' ? 'badge-success' : 'badge-danger') + '">' + (p.status === 'Disponível' ? '● Disponível' : '● Esgotado') + '</span></td>' +
+                '<td><span class="badge ' + (p.status === 'Disponível' ? 'badge-success' : 'badge-danger') + '"><span class="badge-dot"></span>' + (p.status === 'Disponível' ? 'Disponível' : 'Esgotado') + '</span></td>' +
                 '<td><div class="actions-cell">' +
-                    '<button class="btn-action btn-edit" data-id="' + p.id + '" title="Editar"><i class="fa-solid fa-pencil" style="color: rgb(230, 181, 5);"></i> Editar</button>' +
-                    '<button class="btn-action btn-toggle" data-id="' + p.id + '" title="Alternar status"><i class="fa-solid fa-rotate" style="color: rgb(119, 206, 69);"></i> Status</button>' +
-                    '<button class="btn-action btn-delete" data-id="' + p.id + '" title="Excluir"><i class="fa-solid fa-trash-can" style="color: rgb(192, 44, 44);"></i></button>' +
+                '<button class="btn-action btn-edit" data-id="' + p.id + '" title="Editar"><i class="fa-solid fa-pencil" style="color: rgb(230, 181, 5);"></i> Editar</button>' +
+                '<button class="btn-action btn-toggle" data-id="' + p.id + '" title="Alternar status"><i class="fa-solid fa-rotate" style="color: rgb(119, 206, 69);"></i> Status</button>' +
+                '<button class="btn-action btn-delete" data-id="' + p.id + '" title="Excluir"><i class="fa-solid fa-trash-can"></i></button>' +
                 '</div></td>';
 
             tbody.appendChild(tr);
@@ -113,6 +177,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 try {
                     await alternarStatus(parseInt(this.dataset.id));
                     mostrarToast('Status alterado!', 'success');
+                    renderTabela();
                 } catch (e) {
                     mostrarToast('Erro ao alterar status!', 'danger');
                 }
@@ -125,6 +190,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     try {
                         await deletarProduto(parseInt(this.dataset.id));
                         mostrarToast('Produto excluído!', 'danger');
+                        renderTabela();
                     } catch (e) {
                         mostrarToast('Erro ao excluir produto!', 'danger');
                     }
@@ -146,64 +212,100 @@ document.addEventListener('DOMContentLoaded', async function () {
         inputPreco.value = p.preco;
         inputEstoque.value = p.estoque;
         selectCategoria.value = p.categoria;
-        inputImagem.value = p.imagem || '';
-        inputImagem.dispatchEvent(new Event('input')); // trigger preview
+        if (p.imagem) {
+            imgPreview.src = p.imagem;
+            imgPreview.style.display = 'block';
+            previewWrapper.querySelector('.placeholder-text').style.display = 'none';
+            previewWrapper.classList.add('has-image');
+
+            if (p.imagem.startsWith('data:image/')) {
+                setImagemMetodo('file');
+                inputImagem.value = '';
+                fileNameDisplay.textContent = 'Imagem salva no banco (arquivo)';
+            } else {
+                setImagemMetodo('url');
+                inputImagem.value = p.imagem;
+                fileNameDisplay.textContent = 'Nenhum arquivo selecionado';
+            }
+        } else {
+            inputImagem.value = '';
+            imgPreview.src = '';
+            imgPreview.style.display = 'none';
+            previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
+            previewWrapper.querySelector('.placeholder-text').style.display = 'block';
+            previewWrapper.classList.remove('has-image');
+            setImagemMetodo('url');
+            fileNameDisplay.textContent = 'Nenhum arquivo selecionado';
+        }
+
+        if (p.categoria === 'Reparos') {
+            if (groupPreco) groupPreco.style.display = 'none';
+            inputPreco.removeAttribute('required');
+        } else {
+            if (groupPreco) groupPreco.style.display = 'block';
+            inputPreco.setAttribute('required', 'required');
+        }
 
         btnCancelar.style.display = 'block';
         document.querySelector('.box-title-form').innerHTML = '<i class="fa-solid fa-pencil" style="color: rgb(82, 55, 29);"></i> Editando Produto';
-        document.getElementById('btn-submit').innerHTML = '<i class="fa-regular fa-floppy-disk" style="color: rgb(255, 255, 255);"></i> Salvar Alterações';
+        if (btnSubmit) btnSubmit.innerHTML = '<i class="fa-regular fa-floppy-disk" style="color: rgb(255, 255, 255);"></i> Salvar Alterações';
         inputNome.focus();
 
-        // Scroll pro formulário em mobile
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-   function resetarFormulario() {
-    form.reset();
-    inputId.value = '';
-    btnCancelar.style.display = 'none';
-    
-    // Alterado para innerHTML para renderizar o ícone do Font Awesome corretamente
-    document.querySelector('.box-title-form').innerHTML = '<i class="fa-solid fa-plus"></i> Novo Produto';
-    document.getElementById('btn-submit').innerHTML = '<i class="fa-solid fa-plus"></i> Adicionar Produto';
-    
-    imgPreview.style.display = 'none';
-    previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
-    previewWrapper.querySelector('.placeholder-text').style.display = 'block';
-    previewWrapper.classList.remove('has-image');
-}
+    // ===== MONITORAR MUDANÇA DE CATEGORIA EM TEMPO REAL =====
+    selectCategoria.addEventListener('change', function () {
+        if (this.value === 'Reparos') {
+            if (groupPreco) groupPreco.style.display = 'none';
+            inputPreco.removeAttribute('required');
+            inputPreco.value = ''; 
+        } else {
+            if (groupPreco) groupPreco.style.display = 'block';
+            inputPreco.setAttribute('required', 'required');
+        }
+    });
 
     // ===== Submissão do Formulário =====
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
+        var ehReparo = selectCategoria.value === 'Reparos';
+        var precoFinal = ehReparo ? 0 : (parseFloat(inputPreco.value) || 0);
+
         const dados = {
             nome: inputNome.value.trim(),
-            preco: inputPreco.value,
-            estoque: inputEstoque.value,
+            preco: precoFinal,
+            estoque: parseInt(inputEstoque.value) || 0,
             categoria: selectCategoria.value,
-            imagem: inputImagem.value.trim()
+            imagem: imagemAtualMetodo === 'url' ? inputImagem.value.trim() : (imgPreview.src && imgPreview.src.startsWith('data:image/') ? imgPreview.src : ''),
+            status: 'Disponível'
         };
 
         const editId = inputId.value;
+        if (btnSubmit) btnSubmit.disabled = true;
 
         if (editId) {
-            // Modo edição
             try {
                 await editarProduto(parseInt(editId), dados);
-                mostrarToast('Produto atualizado com sucesso!', 'success');
+                mostrarToast('Produto updated com sucesso!', 'success');
                 resetarFormulario();
+                renderTabela();
             } catch (e) {
                 mostrarToast('Erro ao atualizar produto!', 'danger');
+            } finally {
+                if (btnSubmit) btnSubmit.disabled = false;
             }
         } else {
-            // Modo inserção
             try {
                 await adicionarProduto(dados);
                 mostrarToast('Produto adicionado com sucesso!', 'success');
                 resetarFormulario();
+                renderTabela();
             } catch (e) {
                 mostrarToast('Erro ao adicionar produto!', 'danger');
+            } finally {
+                if (btnSubmit) btnSubmit.disabled = false;
             }
         }
     });
@@ -220,9 +322,30 @@ document.addEventListener('DOMContentLoaded', async function () {
         window.location.href = 'login.html';
     });
 
+    // ===== RESETAR FORMULÁRIO =====
+    function resetarFormulario() {
+        form.reset();
+        inputId.value = '';
+        btnCancelar.style.display = 'none';
+
+        document.querySelector('.box-title-form').innerHTML = '<i class="fa-solid fa-plus"></i> Novo Produto';
+        if (btnSubmit) btnSubmit.innerHTML = '<i class="fa-solid fa-plus"></i> Adicionar Produto';
+
+        imgPreview.style.display = 'none';
+        imgPreview.src = '';
+        previewWrapper.querySelector('.placeholder-text').innerHTML = '<i class="fa-solid fa-camera" style="color: rgb(192, 192, 192);"></i> Preview da imagem aparecerá aqui';
+        previewWrapper.querySelector('.placeholder-text').style.display = 'block';
+        previewWrapper.classList.remove('has-image');
+
+        setImagemMetodo('url');
+        fileNameDisplay.textContent = 'Nenhum arquivo selecionado';
+
+        if (groupPreco) groupPreco.style.display = 'block';
+        inputPreco.setAttribute('required', 'required');
+    }
+
     // ===== Toast Notification =====
     function mostrarToast(mensagem, tipo) {
-        // Remover toast anterior se existir
         const existente = document.querySelector('.toast');
         if (existente) existente.remove();
 
