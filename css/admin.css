@@ -340,18 +340,21 @@ body.admin-page {
 }
 
 .btn-delete {
-    background: var(--danger) !important;
-    color: #fff !important;
+    background: var(--danger-bg);
+    color: var(--danger);
 }
 
 .btn-delete i {
-    color: #fff !important;
+    color: var(--danger) !important;
 }
 
 .btn-delete:hover {
-    background: #dc2626 !important;
+    background: var(--danger);
+    color: #fff;
+}
+
+.btn-delete:hover i {
     color: #fff !important;
-    transform: scale(1.05);
 }
 
 /* ===== Empty State ===== */
